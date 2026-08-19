@@ -1,0 +1,332 @@
+abstract class Animal {
+
+    // =========================
+    // VARIABLES
+    // =========================
+
+    // Instance variables
+    public String name = "Animal";
+
+    protected int age = 10;
+
+    String type = "Living Being";       // default
+
+    private String secret = "Private Data";
+
+    // Final instance variable
+    final String species = "Animal";
+
+    // Static variable
+    public static int count = 0;
+
+
+    // =========================
+    // CONSTRUCTORS
+    // =========================
+
+    public Animal() {
+        count++;
+        System.out.println("Public Animal constructor");
+    }
+
+    protected Animal(int age) {
+        this.age = age;
+        count++;
+    }
+
+    Animal(String name, int age) {
+        this.name = name;
+        this.age = age;
+        count++;
+    }
+
+
+    // =========================
+    // CONCRETE METHODS
+    // =========================
+
+    public void eat() {
+        System.out.println("Animal is eating");
+    }
+
+    protected void walk() {
+        System.out.println("Animal is walking");
+    }
+
+    void sleep() {
+        System.out.println("Animal is sleeping");
+    }
+
+    private void secretMethod() {
+        System.out.println("Private animal method");
+    }
+
+
+    // =========================
+    // ABSTRACT METHODS
+    // =========================
+
+    public abstract void sound();
+
+    protected abstract void move();
+
+    abstract void breathe();
+
+
+    // =========================
+    // STATIC METHOD
+    // =========================
+
+    public static void info() {
+        System.out.println("Animal is a parent class");
+        System.out.println("Number of animals: " + count);
+    }
+
+
+    // =========================
+    // FINAL METHOD
+    // =========================
+
+    public final void sleepForever() {
+        System.out.println("Final method");
+    }
+}
+
+
+// =====================================================
+// SUBCLASS
+// =====================================================
+
+class Dog extends Animal {
+
+    Dog() {
+        super();
+    }
+
+    @Override
+    public void sound() {
+        System.out.println("Dog says: Bark");
+    }
+
+    @Override
+    protected void move() {
+        System.out.println("Dog is running");
+    }
+
+    @Override
+    void breathe() {
+        System.out.println("Dog is breathing");
+    }
+
+    void showParentData() {
+
+        System.out.println(name);       // public
+        System.out.println(age);        // protected
+        System.out.println(type);       // default
+
+        // System.out.println(secret);  // ❌ private
+
+        // Static variable
+        System.out.println(count);
+        System.out.println(Animal.count);
+    }
+}
+
+
+// =====================================================
+// MAIN
+// =====================================================
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Dog d1 = new Dog();
+        Dog d2 = new Dog();
+
+        // Static variable belongs to the CLASS,
+        // not to individual objects
+
+        System.out.println(Animal.count);
+        System.out.println(Dog.count);
+
+        Animal.info();
+
+        d1.sound();
+        d1.move();
+        d1.breathe();
+
+        d1.eat();
+        d1.walk();
+        d1.sleep();
+
+        d1.sleepForever();
+
+        d1.showParentData();
+    }
+}
+
+--------------------------------------------------------------------
+
+interface Animal {
+
+    // ==================================================
+    // INTERFACE VARIABLES
+    // ==================================================
+
+    // Automatically:
+    // public static final
+
+    public static final int LEGS = 4;
+
+    // We can also write:
+
+    int EYES = 2;
+
+    // Java automatically treats it as:
+    // public static final int EYES = 2;
+
+
+    // ==================================================
+    // ABSTRACT METHODS
+    // ==================================================
+
+    // Automatically public abstract
+
+    void sound();
+
+    public abstract void move();
+
+
+    // ==================================================
+    // DEFAULT METHOD
+    // ==================================================
+
+    default void eat() {
+        System.out.println("Animal is eating");
+    }
+
+
+    // ==================================================
+    // STATIC METHOD
+    // ==================================================
+
+    static void info() {
+        System.out.println("Animal interface");
+    }
+
+
+    // ==================================================
+    // PRIVATE METHOD
+    // ==================================================
+
+    private void helper() {
+        System.out.println("Private helper");
+    }
+
+
+    default void useHelper() {
+        helper();
+    }
+
+
+    // ==================================================
+    // ❌ CONSTRUCTOR
+    // ==================================================
+
+    // Animal() {
+    // }
+    //
+    // ❌ Interface cannot have constructor
+
+
+    // ==================================================
+    // ❌ INSTANCE VARIABLE
+    // ==================================================
+
+    // int age;
+    //
+    // ❌ This is NOT an instance variable.
+    //
+    // If written like this, Java automatically makes it:
+    //
+    // public static final int age;
+}
+class Dog implements Animal {
+
+    // ==================================================
+    // IMPLEMENT ABSTRACT METHODS
+    // ==================================================
+
+    @Override
+    public void sound() {
+        System.out.println("Dog → Bark");
+    }
+
+    @Override
+    public void move() {
+        System.out.println("Dog → Running");
+    }
+}
+public class Main {
+
+    public static void main(String[] args) {
+
+        // Animal a = new Animal();
+        // ❌ Interface cannot be instantiated
+
+
+        Dog d = new Dog();
+
+
+        // ==================================================
+        // ABSTRACT METHODS
+        // ==================================================
+
+        d.sound();
+        d.move();
+
+
+        // ==================================================
+        // DEFAULT METHOD
+        // ==================================================
+
+        d.eat();
+
+
+        // ==================================================
+        // STATIC VARIABLES
+        // ==================================================
+
+        System.out.println(Animal.LEGS);
+
+        System.out.println(Animal.EYES);
+
+
+        // This is also possible:
+
+        System.out.println(Dog.LEGS);
+
+
+        // But this is NOT recommended:
+
+        System.out.println(d.LEGS);
+
+
+        // ==================================================
+        // STATIC METHOD
+        // ==================================================
+
+        Animal.info();
+
+
+        // ==================================================
+        // PRIVATE METHOD
+        // ==================================================
+
+        // Animal.helper();
+        // ❌ Cannot access private method
+
+        d.useHelper();     // ✅
+    }
+}

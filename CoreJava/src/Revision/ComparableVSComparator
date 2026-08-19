@@ -1,0 +1,155 @@
+Suppose:(case1:Integer)
+
+List<Integer> nums = new ArrayList<>();
+
+nums.add(30);
+nums.add(10);
+nums.add(20);
+
+Now:
+
+Collections.sort(nums);
+
+Java can sort this because Integer already has a natural ordering.
+
+So:
+
+30
+10
+20
+
+     ↓ Collections.sort(nums)
+
+10
+20
+30
+
+You don't need to create a Comparator yourself.
+
+Why?
+
+Because Integer already implements Comparable<Integer> internally.
+
+Conceptually:
+
+Integer
+   ↓
+implements Comparable<Integer>
+   ↓
+compareTo()
+   ↓
+natural integer ordering
+
+
+2. Now give your own Comparator
+
+Suppose:
+
+Collections.sort(nums, com);
+
+Now you're saying:
+
+"Don't use the default/natural ordering. I am giving you a separate comparison rule called com. Use that rule."
+
+For example, suppose com sorts in descending order:
+
+Comparator<Integer> com = (a, b) -> Integer.compare(b, a);
+
+Then:
+
+Collections.sort(nums, com);
+
+produces:
+
+30
+20
+10
+
+So your understanding here is correct:
+
+Collections.sort(list, comparator) allows me to provide my own comparison logic.
+----------------------------------------
+
+Case 1: Student has no comparison logic → Comparator provides it
+
+You have:
+
+class Student {
+    int age;
+    String name;
+}
+
+There is no compareTo() inside Student.
+
+Now you create a separate Comparator:
+
+Comparator<Student> com = (s1, s2) ->
+        Integer.compare(s1.age, s2.age);
+
+Then:
+
+Collections.sort(students, com);
+
+The flow is:
+
+Student class
+    ↓
+No comparison logic
+    ↓
+Comparator<Student>
+    ↓
+compare(s1, s2)
+    ↓
+Compare students by age
+
+So yes:
+
+The Comparator contains the comparison logic, and we pass that Comparator to Collections.sort().
+
+Therefore Student does not need to implement Comparable.
+
+Case 2: Student itself provides the comparison logic → Comparable
+
+Now you say:
+
+"I want Student to have its own natural/default ordering."
+
+Then:
+
+class Student implements Comparable<Student> {
+
+    int age;
+    String name;
+
+    @Override
+    public int compareTo(Student that) {
+        return Integer.compare(this.age, that.age);
+    }
+}
+
+Now:
+
+Collections.sort(students);
+
+That's enough.
+
+You don't provide a Comparator.
+
+Why?
+
+Because Collections.sort(students) knows:
+
+"These Students implement Comparable, so I'll use their compareTo() method."
+
+The flow is:
+
+Student
+   ↓
+implements Comparable<Student>
+   ↓
+compareTo(Student that)
+   ↓
+Student provides its own natural ordering
+   ↓
+Collections.sort(students)
+

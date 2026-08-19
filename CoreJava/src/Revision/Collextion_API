@@ -1,0 +1,213 @@
+If Collection has a method, does List also have it?
+
+Yes.
+
+Because:
+
+Collection
+     ↑
+    List
+
+List extends Collection.
+
+Therefore, whatever methods are available in Collection are also available through List.
+
+For example, Collection has:
+
+add()
+remove()
+size()
+contains()
+isEmpty()
+
+So a List also has them:
+
+List<Integer> list = new ArrayList<>();
+
+list.add(10);
+list.remove(10);
+list.size();
+list.contains(10);
+list.isEmpty();
+
+You don't get a completely different version of add() just because you're using List.
+
+Think inheritance:
+Collection
+   |
+   |  add()
+   |  remove()
+   |  size()
+   |  contains()
+   ↓
+List
+   |
+   |  gets all of the above
+   |
+   |  + get()
+   |  + set()
+   |  + add(index, element)
+   |  + indexOf()
+   ↓
+ArrayList
+
+So List inherits the Collection methods and adds its own methods.
+
+2. Does List have additional features compared to Collection?
+
+Yes. This is the key difference.
+
+Collection is general.
+
+It doesn't assume that elements have positions/indexes.
+
+For example, a Set doesn't have:
+
+0th element
+1st element
+2nd element
+
+So Collection cannot provide:
+
+get(2);
+
+because that doesn't make sense for every Collection.
+
+But List specifically represents an ordered, positional collection.
+
+Therefore, List can provide:
+
+get(2);
+set(2, 100);
+add(2, 50);
+remove(2);
+indexOf(50);
+
+So:
+
+Collection
+    ↓
+General operations
+    ↓
+add()
+remove()
+size()
+contains()
+
+List
+    ↓
+Everything from Collection
+    +
+List-specific operations
+    ↓
+get(index)
+set(index, element)
+add(index, element)
+indexOf()
+
+That's why List is more specific than Collection.
+
+3. Now the most important question: What does "ArrayList provides concrete implementation" mean?
+
+This is where I think your confusion is happening.
+
+When we say:
+
+"ArrayList provides a concrete implementation of List."
+
+we mean:
+
+List only defines what operations should be available. ArrayList defines how those operations actually work internally.
+
+This is extremely important.
+
+Think about List
+
+Suppose List says:
+
+list.add(10);
+
+The interface essentially says:
+
+"Any class implementing me must provide an add() operation."
+
+But List doesn't say:
+
+"Store 10 inside an array at position 3."
+
+It doesn't care how.
+
+ArrayList makes that decision
+
+ArrayList says:
+
+"I will implement List using a dynamically resizable array internally."
+
+Conceptually:
+
+List
+ │
+ │ says WHAT operations must exist
+ ↓
+ArrayList
+ │
+ │ decides HOW to perform them
+ ↓
+Internal array
+
+For example:
+
+List<Integer> list = new ArrayList<>();
+
+list.add(10);
+list.add(20);
+list.add(30);
+
+Internally, conceptually, ArrayList maintains something like:
+
+Internal array:
+
+[10] [20] [30] [ ] [ ] [ ]
+
+You don't see that array directly.
+
+ArrayList manages it for you.
+
+4. So does ArrayList have its own methods?
+
+Yes, but be careful with what you mean.
+
+ArrayList implements the methods required by List, such as:
+
+add()
+remove()
+get()
+set()
+size()
+
+The important point is that the implementation is inside ArrayList.
+
+For example:
+
+List<Integer> list = new ArrayList<>();
+
+When you write:
+
+list.add(10);
+
+the add() method that actually executes is the implementation provided by ArrayList.
+
+Conceptually:
+
+You write:
+
+list.add(10)
+      ↓
+List says:
+"add() should exist"
+      ↓
+Actual object is ArrayList
+      ↓
+ArrayList's implementation of add()
+      ↓
+stores 10 in its internal array

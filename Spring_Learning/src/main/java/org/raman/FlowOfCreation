@@ -1,0 +1,132 @@
+
+Step 2 — Spring container is created
+
+You are saying:
+
+"Spring, create an ApplicationContext for me, and use beans.xml as your configuration."
+
+So:
+
+new ClassPathXmlApplicationContext("beans.xml")
+
+creates the Spring IoC container.
+
+Think:
+
+                 Spring Container
+                       │
+                       │
+                  reads beans.xml
+                       │
+                       ▼
+
+The container is basically the place where Spring will create and manage objects (beans).
+
+Step 3 — Spring goes to beans.xml
+
+Spring looks inside:
+
+src/main/resources/beans.xml
+
+It finds:
+
+<bean id="dev" class="org.raman.Dev">
+</bean>
+
+Now Spring understands:
+
+"There is a bean called dev, and its class is org.raman.Dev."
+
+So Spring knows which class it needs to create an object from.
+
+Step 4 — Spring creates the Dev object
+
+Spring sees:
+
+class="org.raman.Dev"
+
+So internally, conceptually, Spring does something similar to:
+
+Dev obj = new Dev();
+
+But you did not write new Dev().
+
+Spring did it.
+
+That's one of the important ideas behind IoC (Inversion of Control).
+
+Normally:
+
+Dev obj = new Dev();
+
+means:
+
+"I, the programmer, am creating the object."
+
+With Spring:
+
+<bean id="dev" class="org.raman.Dev">
+
+means:
+
+"Spring, you create and manage this object."
+
+Step 5 — Spring keeps that object inside the container
+
+Conceptually:
+
+        Spring IoC Container
+        ┌───────────────────┐
+        │                   │
+        │  "dev" → Dev obj  │
+        │                   │
+        └───────────────────┘
+
+The important thing here is:
+
+"dev"
+
+is the bean ID.
+
+And:
+
+Dev obj
+
+is the actual object.
+
+So:
+
+Bean ID             Object
+  dev       ──────► Dev object
+Step 6 — Now your next line executes
+
+After the container has been created:
+
+Dev obj = (Dev) context.getBean("dev");
+
+You're saying:
+
+"Container, give me the object whose bean ID is dev."
+
+Spring looks inside itself:
+
+Spring Container
+
+
+"dev" ───────► Dev object
+
+It finds it and gives the object back.
+
+So now:
+
+Dev obj
+
+refers to the same Dev object that Spring created.
+
+Step 7 — You call the method
+
+Finally:
+
+obj.code();
+
+You're simply calling the code() method on that object.

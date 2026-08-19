@@ -1,0 +1,33 @@
+@Entity
+
+Your version:
+
+This is the table we are using.
+
+Better:
+
+@Entity tells Hibernate that this Java class participates in ORM and should be managed/mapped as an entity.
+
+
+pom.xml
+
+Your version:
+
+This tells the ORM about dependencies.
+
+Better:
+
+pom.xml tells Maven which libraries my Java project needs, such as Hibernate and the PostgreSQL JDBC driver. Maven makes those libraries available to the application.
+
+
+
+hibernate.cfg.xml
+
+Your version:
+
+This contains credentials required to connect Java to the database.
+
+Better:
+
+hibernate.cfg.xml provides Hibernate with configuration information, including database URL, username, password, JDBC driver, and other Hibernate settings.
+

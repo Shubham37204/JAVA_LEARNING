@@ -1,0 +1,146 @@
+1. The overall connection
+
+You currently have:
+
+Main
+  ↓
+Student
+  ↓
+dbjdbc
+  ↓
+MySQL Database
+
+But more precisely:
+
+                Student.java
+             ┌─────────────────┐
+             │ id              │
+             │ name            │
+             │ age             │
+             │ city            │
+             │                 │
+             │ constructor     │
+             │ getters/setters │
+             └────────┬────────┘
+                      │
+                      │ Student object
+                      ↓
+Main ─────────────> dbjdbc.CreateUser(student)
+                      │
+                      │ getName()
+                      │ getAge()
+                      │ getCity()
+                      ↓
+                PreparedStatement
+                      │
+                      ↓
+                MySQL Database
+
+So Student does not connect to the database.
+
+Student is simply a Java object that holds the data.
+
+dbjdbc is responsible for taking that Java data and communicating with MySQL.
+
+main() is where you create the data and tell dbjdbc what to do.
+
+2. First understand your Student
+
+You have:
+
+public Student(String name, int age, String city) {
+    this.name = name;
+    this.age = age;
+    this.city = city;
+}
+
+So when you write:
+
+new Student("Rahul", 24, "odhisa")
+
+Java creates an object:
+
+Student object
+
+name = "Rahul"
+age  = 24
+city = "odhisa"
+
+Think of it like:
+
+student
+ ├── name → Rahul
+ ├── age  → 24
+ └── city → odhisa
+
+Then:
+
+dbj.CreateUser(student);
+
+passes this entire Student object to CreateUser().
+
+3. What happens inside CreateUser?
+
+Currently you have:
+
+public void CreateUser(Student student) {
+    String sql = "INSERT INTO studentInfo VALUES (1, 'Shubham', 24, 'Ranchi')";
+    executeQuery(sql);
+}
+
+This is still static.
+
+You are accepting:
+
+Student student
+
+but then not using it.
+
+That's the part we need to change.
+
+Instead:
+
+public void CreateUser(Student student) {
+
+    String sql =
+        "INSERT INTO studentInfo (sname, age, scity) VALUES (?, ?, ?)";
+
+    ...
+}
+
+Now the ? are empty places.
+
+INSERT INTO studentInfo
+(sname, age, scity)
+VALUES
+(   ?,     ?,     ?   )
+
+Then we take the values from the Student object:
+
+student.getName()
+student.getAge()
+student.getCity()
+
+and put them into those ?:
+
+ps.setString(1, student.getName());
+ps.setInt(2, student.getAge());
+ps.setString(3, student.getCity());
+
+So the flow is:
+
+new Student("Rahul", 24, "odhisa")
+              ↓
+        Student object
+              ↓
+       CreateUser(student)
+              ↓
+       student.getName()
+              ↓
+           "Rahul"
+              ↓
+       PreparedStatement
+              ↓
+          INSERT INTO
+              ↓
+        MySQL database

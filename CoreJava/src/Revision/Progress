@@ -1,0 +1,53 @@
+Level 1 — Normal object creation
+
+Problem:
+
+I have a class and I need an object.
+
+A obj = new A();
+Level 2 — Inheritance
+
+Problem:
+
+I have a common parent and want specialized child classes.
+
+class B extends A
+Level 3 — Runtime Polymorphism
+
+Problem:
+
+I want one parent reference to work with different child objects.
+
+A obj = new B();
+
+And when show() is overridden:
+
+obj.show();
+
+Java uses dynamic method dispatch to select the implementation at runtime.
+
+Level 4 — Inner Class
+
+Different problem:
+
+I have a class that is strongly related to another class, so I want to define it inside the outer class.
+
+class A {
+
+    class B {
+    }
+}
+Level 5 — Anonymous Inner Class
+
+Another different problem:
+
+I need a small class implementation only once, and I don't want to give that class a name.
+
+A obj = new A() {
+
+    void show() {
+    }
+};
+
+
+

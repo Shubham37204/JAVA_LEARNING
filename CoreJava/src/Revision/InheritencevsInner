@@ -1,0 +1,83 @@
+You are asking:
+
+If B is strongly related to A, why don't we simply use inheritance (B extends A)? Why put B inside A?
+
+Because "strongly related" and "inherits from" mean two completely different relationships.
+
+1. Inheritance means "IS-A"
+
+If we write:
+
+class Dog extends Animal {
+}
+
+we are saying:
+
+Dog IS-A Animal.
+
+Animal
+   ↑
+  Dog
+
+A Dog is a specialized type of Animal.
+
+So inheritance is about a type/parent-child relationship.
+
+Other examples:
+
+Car IS-A Vehicle
+Dog IS-A Animal
+Manager IS-A Employee
+Circle IS-A Shape
+2. Inner class means "BELONGS TO / IS PART OF"
+
+Suppose:
+
+class Car {
+
+    class Engine {
+    }
+}
+
+We are NOT saying:
+
+Engine IS-A Car ❌
+
+That would make no logical sense.
+
+We're saying:
+
+An Engine is a component/part of a Car.
+
+Car
+└── Engine
+
+This is a has-a / part-of relationship.
+
+3. This is the key difference
+Inheritance
+class Dog extends Animal
+
+means:
+
+Dog IS-A Animal
+Inner class
+class Car {
+    class Engine {
+    }
+}
+
+means:
+
+Car HAS-A / contains an Engine concept
+
+So:
+
+extends
+   ↓
+IS-A relationship
+
+
+inner class
+   ↓
+strongly associated / part-of relationship

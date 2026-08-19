@@ -1,0 +1,228 @@
+1. executeUpdate() vs executeQuery()
+
+You correctly noticed that they are different.
+
+executeUpdate()
+
+Used for SQL that changes the database:
+
+INSERT → add rows
+UPDATE → modify rows
+DELETE → remove rows
+
+It returns an int telling you how many rows were affected.
+
+For example:
+
+UPDATE studentInfo SET scity='Pune' WHERE id=1;
+
+If one row was changed:
+
+int res = st.executeUpdate(sql);
+
+then:
+
+res = 1
+
+But don't think executeUpdate() means only one row.
+
+It can affect multiple rows.
+
+For example:
+
+UPDATE studentInfo SET scity='Pune';
+
+If there are 5 students:
+
+res = 5
+
+So the real distinction is:
+
+executeUpdate() → SQL that changes data → returns number of affected rows.
+
+2. executeQuery()
+
+SELECT is different because it returns a set of rows.
+
+For example:
+
+SELECT * FROM studentInfo;
+
+could return:
+
+id   sname      age   scity
+1    Shubham    24    Ranchi
+2    Rahul      23    Delhi
+3    Aman       25    Pune
+
+So:
+
+ResultSet rs = st.executeQuery(sql);
+
+gives you a ResultSet through which you can read those returned rows.
+
+Therefore your understanding is correct:
+
+INSERT / UPDATE / DELETE
+        ↓
+   executeUpdate()
+        ↓
+    int result
+        ↓
+number of rows affected
+
+
+SELECT
+        ↓
+   executeQuery()
+        ↓
+    ResultSet
+        ↓
+rows returned by database
+3. Your second understanding about the ResultSet pointer
+
+Yes! This is very important.
+
+But one small correction:
+
+You said:
+
+"pointer is below the index equals to one"
+
+Instead, think:
+
+When a ResultSet is created, its cursor starts BEFORE the first row.
+
+Suppose the database returns:
+
+Row 1 → Shubham
+Row 2 → Rahul
+Row 3 → Aman
+
+Initially:
+
+       Cursor
+          ↓
+      [before Row 1]
+
+Row 1 → Shubham
+Row 2 → Rahul
+Row 3 → Aman
+
+It is not pointing at Row 1 yet.
+
+4. Then rs.next() moves it
+
+When you do:
+
+rs.next();
+
+the cursor moves:
+
+Row 1 → Shubham
+   ↑
+ cursor
+
+Now you can do:
+
+rs.getString("sname");
+
+and get:
+
+Shubham
+
+Then:
+
+rs.next();
+
+moves to:
+
+Row 2 → Rahul
+   ↑
+ cursor
+
+Then:
+
+rs.getString("sname");
+
+gives:
+
+Rahul
+5. Why do we usually use while(rs.next())?
+
+Because next() does two things:
+
+First
+
+It moves the cursor to the next row.
+
+Second
+
+It tells you whether a row actually exists.
+
+So:
+
+while (rs.next()) {
+    System.out.println(rs.getString("sname"));
+}
+
+means:
+
+Move to next row
+      ↓
+Is there a row?
+      ↓
+YES → read it
+      ↓
+Move to next row
+      ↓
+Is there a row?
+      ↓
+YES → read it
+      ↓
+...
+      ↓
+NO → stop
+6. And yes, reading before next() is a problem
+
+If you do:
+
+ResultSet rs = st.executeQuery(sql);
+
+System.out.println(rs.getString("sname"));
+
+without first moving the cursor:
+
+rs.next();
+
+the cursor is still before the first row.
+
+So Java will throw a SQLException because you're trying to read column data when the cursor isn't positioned on a valid row.
+
+That's why this is correct:
+
+ResultSet rs = st.executeQuery(sql);
+
+while (rs.next()) {
+    String name = rs.getString("sname");
+}
+
+ResultSet created
+       ↓
+Cursor is BEFORE first row
+       ↓
+     rs.next()
+       ↓
+   ┌───────────────┐
+   │ Does a row    │
+   │ exist?        │
+   └───────────────┘
+      ↓         ↓
+    YES         NO
+     ↓           ↓
+ Move to       return false
+ that row          ↓
+     ↓           exit loop
+ return true
+     ↓
+Read the row

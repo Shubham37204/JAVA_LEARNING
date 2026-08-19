@@ -1,0 +1,589 @@
+# 1. First look at the relationship
+
+You have:
+
+```text
+Computer
+   ↑
+   |
+   ├── Laptop
+   |
+   └── Dekstop
+```
+
+Because both classes implement `Computer`:
+
+```java
+public class Laptop implements Computer
+```
+
+and
+
+```java
+public class Dekstop implements Computer
+```
+
+So both are valid `Computer` objects.
+
+---
+
+# 2. Your `Dev` class
+
+You changed:
+
+```java
+private Laptop laptop;
+```
+
+to:
+
+```java
+private Computer computer;
+```
+
+This is a very important change.
+
+You are basically saying:
+
+> "Dev doesn't care whether I get a Laptop or a Desktop. I only need something that behaves like a Computer."
+
+Your `Dev` class:
+
+```java
+private Computer computer;
+```
+
+and:
+
+```java
+public void setComputer(Computer computer) {
+    this.computer = computer;
+}
+```
+
+means `Dev` can accept **any object that implements `Computer`**.
+
+For example:
+
+```java
+Laptop laptop = new Laptop();
+
+Dev dev = new Dev();
+
+dev.setComputer(laptop);
+```
+
+This works.
+
+And:
+
+```java
+Dekstop desktop = new Dekstop();
+
+Dev dev = new Dev();
+
+dev.setComputer(desktop);
+```
+
+also works.
+
+Because both satisfy:
+
+```text
+Computer
+```
+
+---
+
+# 3. But look at your current XML
+
+You have:
+
+```xml
+<bean id="dev" class="org.raman.Dev">
+    <constructor-arg ref="lap1"/>
+</bean>
+
+<bean id="lap1" class="org.raman.Laptop"/>
+```
+
+There is a problem here.
+
+Your current `Dev` class, as you showed it, has:
+
+```java
+public Dev() {
+    System.out.println("Dev constructor");
+}
+```
+
+but **you did not show a constructor like:**
+
+```java
+public Dev(Computer computer) {
+    this.computer = computer;
+}
+```
+
+So this:
+
+```xml
+<constructor-arg ref="lap1"/>
+```
+
+would require Spring to find a constructor similar to:
+
+```java
+Dev(Computer computer)
+```
+
+or:
+
+```java
+Dev(Laptop laptop)
+```
+
+But your current `Dev` only has:
+
+```java
+Dev()
+```
+
+Therefore, if you want to use the `setComputer()` method you showed, you should use **setter injection**, not constructor injection.
+
+---
+
+# 4. Use setter injection
+
+Your `Dev` already has:
+
+```java
+public void setComputer(Computer computer) {
+    this.computer = computer;
+}
+```
+
+So XML should be:
+
+```xml
+<bean id="dev" class="org.raman.Dev">
+    <property name="computer" ref="lap1"/>
+</bean>
+
+<bean id="lap1" class="org.raman.Laptop"/>
+```
+
+Now everything matches.
+
+Spring sees:
+
+```xml
+<property name="computer" ref="lap1"/>
+```
+
+and thinks:
+
+> I need to set the `computer` property of `Dev`.
+
+Spring finds:
+
+```java
+setComputer(Computer computer)
+```
+
+and calls it.
+
+Conceptually:
+
+```java
+Dev dev = new Dev();
+
+Laptop lap1 = new Laptop();
+
+dev.setComputer(lap1);
+```
+
+---
+
+# 5. Notice something very important
+
+Your Java variable is:
+
+```java
+Computer computer;
+```
+
+But the actual object is:
+
+```java
+Laptop
+```
+
+That's completely valid.
+
+This is normal Java polymorphism:
+
+```java
+Computer computer = new Laptop();
+```
+
+Similarly, Spring is effectively doing:
+
+```java
+Computer computer = new Laptop();
+```
+
+inside your `Dev` object.
+
+So:
+
+```text
+Dev
+ |
+ | computer
+ ↓
+Computer reference
+ |
+ ↓
+Laptop object
+```
+
+---
+
+# 6. Now imagine you change Laptop to Desktop
+
+Currently:
+
+```xml
+<bean id="lap1" class="org.raman.Laptop"/>
+```
+
+Spring creates:
+
+```java
+Laptop lap1 = new Laptop();
+```
+
+and injects it:
+
+```java
+dev.setComputer(lap1);
+```
+
+So when you call:
+
+```java
+obj.code();
+```
+
+your code executes:
+
+```java
+computer.compile();
+```
+
+The `computer` reference points to a `Laptop`.
+
+Therefore Java calls:
+
+```java
+Laptop.compile()
+```
+
+and output will be:
+
+```text
+Laptop constructor
+Compiling in laptop
+computer inside of code
+```
+
+---
+
+# 7. Now the beauty of using the interface
+
+Suppose you change only XML:
+
+```xml
+<bean id="dev" class="org.raman.Dev">
+    <property name="computer" ref="desktop"/>
+</bean>
+
+<bean id="desktop" class="org.raman.Dekstop"/>
+```
+
+You don't change `Dev.java`.
+
+You don't change `App.java`.
+
+You don't change:
+
+```java
+computer.compile();
+```
+
+Spring now does conceptually:
+
+```java
+Dekstop desktop = new Dekstop();
+
+Dev dev = new Dev();
+
+dev.setComputer(desktop);
+```
+
+Therefore:
+
+```java
+computer.compile();
+```
+
+calls:
+
+```java
+Dekstop.compile();
+```
+
+Output:
+
+```text
+Desktop constructor
+Compiling in Desktop
+computer inside of code
+```
+
+---
+
+# 8. This is why we use the interface
+
+Imagine you had written:
+
+```java
+private Laptop laptop;
+```
+
+Then `Dev` is tightly connected to `Laptop`.
+
+But with:
+
+```java
+private Computer computer;
+```
+
+`Dev` doesn't care about the implementation.
+
+It can work with:
+
+```text
+Laptop
+Dekstop
+FutureComputer
+GamingComputer
+Mac
+Server
+...
+```
+
+as long as they implement:
+
+```java
+Computer
+```
+
+That's **loose coupling**.
+
+---
+
+# 9. The complete Spring flow
+
+With:
+
+```xml
+<bean id="dev" class="org.raman.Dev">
+    <property name="computer" ref="lap1"/>
+</bean>
+
+<bean id="lap1" class="org.raman.Laptop"/>
+```
+
+the flow is:
+
+```text
+                App.java
+                   |
+                   ↓
+        new ClassPathXmlApplicationContext
+                   |
+                   ↓
+             Spring Container
+                   |
+                   ↓
+              Read beans.xml
+                   |
+          ┌────────┴─────────┐
+          ↓                  ↓
+      id="lap1"           id="dev"
+      Laptop.class        Dev.class
+          ↓                  ↓
+     new Laptop()        new Dev()
+          ↓                  ↓
+          └───────┐          |
+                  |          |
+                  └──────────┤
+                             ↓
+                    setComputer(lap1)
+                             |
+                             ↓
+                    Dev.computer
+                             |
+                             ↓
+                       Laptop object
+```
+
+Then:
+
+```java
+Dev obj = (Dev) context.getBean("dev");
+```
+
+gets that already-configured `Dev`.
+
+Then:
+
+```java
+obj.code();
+```
+
+runs:
+
+```java
+computer.compile();
+```
+
+Since `computer` contains a `Laptop`:
+
+```text
+computer
+   ↓
+Laptop object
+   ↓
+compile()
+   ↓
+"Compiling in laptop"
+```
+
+---
+
+# 10. One correction to your current code
+
+If you want **constructor injection with the interface**, you can absolutely do that too.
+
+Add this constructor to `Dev`:
+
+```java
+public Dev(Computer computer) {
+    this.computer = computer;
+    System.out.println("Dev constructor with Computer");
+}
+```
+
+Then your XML:
+
+```xml
+<bean id="dev" class="org.raman.Dev">
+    <constructor-arg ref="lap1"/>
+</bean>
+
+<bean id="lap1" class="org.raman.Laptop"/>
+```
+
+Now Spring effectively does:
+
+```java
+Laptop lap1 = new Laptop();
+
+Dev dev = new Dev(lap1);
+```
+
+And because:
+
+```java
+Laptop implements Computer
+```
+
+this is perfectly valid:
+
+```java
+Computer computer = lap1;
+```
+
+So the two approaches are:
+
+### Setter injection
+
+```xml
+<property name="computer" ref="lap1"/>
+```
+
+→ Spring calls:
+
+```java
+dev.setComputer(lap1);
+```
+
+### Constructor injection
+
+```xml
+<constructor-arg ref="lap1"/>
+```
+
+→ Spring calls:
+
+```java
+new Dev(lap1);
+```
+
+---
+
+## The key thing I want you to understand
+
+Don't think:
+
+> "`ref=lap1` means put the word `lap1` into `computer`."
+
+Think:
+
+> **"`ref=lap1` means find the actual Spring bean whose ID is `lap1`, and inject that object."**
+
+So:
+
+```xml
+ref="lap1"
+```
+
+↓
+
+```text
+Spring finds bean "lap1"
+```
+
+↓
+
+```text
+Laptop object
+```
+
+↓
+
+```java
+setComputer(laptop)
+```
+
+↓
+
+```text
+Dev
+ └── Computer reference → Laptop object
+```
+
+And because the reference is of type `Computer`, you can later replace `Laptop` with `Dekstop` **without changing the `Dev` class**. That's the real reason you're learning this interface-based injection example.

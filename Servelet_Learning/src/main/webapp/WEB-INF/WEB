@@ -1,0 +1,123 @@
+1. XML declaration
+<?xml version="1.0" encoding="UTF-8"?>
+
+This simply says:
+
+This is an XML file
+XML version = 1.0
+Character encoding = UTF-8
+
+You don't need to worry much about this part.
+
+2. <web-app>
+<web-app
+    xmlns="https://jakarta.ee/xml/ns/jakartaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+    https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+    version="6.0">
+
+This is the root element of web.xml.
+
+Everything related to your web application goes inside:
+
+<web-app>
+    ...
+</web-app>
+
+You can think of it like:
+
+web.xml
+   |
+   └── <web-app>
+          |
+          ├── servlet configuration
+          ├── servlet mapping
+          ├── welcome pages
+          └── other configurations
+What is version="6.0"?
+
+It tells Tomcat that this configuration follows the Servlet 6.0 specification.
+
+Since you're using Tomcat 11, Jakarta Servlet 6.0 is appropriate.
+
+3. <servlet>
+
+Now we have:
+
+<servlet>
+    <servlet-name>second</servlet-name>
+    <servlet-class>SecondServlet</servlet-class>
+</servlet>
+
+This tells Tomcat:
+
+"There is a servlet in my application."
+
+4. <servlet-name>
+<servlet-name>second</servlet-name>
+
+This is simply a name that we give to the servlet inside the XML configuration.
+
+We decided to call it:
+
+second
+
+It does not have to be the Java class name.
+
+For example, this is also valid:
+
+<servlet-name>myFirstServlet</servlet-name>
+
+even if the Java class is:
+
+SecondServlet
+
+Think of it as an internal name/ID.
+
+5. <servlet-class>
+<servlet-class>SecondServlet</servlet-class>
+
+This is very important.
+
+It tells Tomcat:
+
+"The servlet named second is implemented by this Java class."
+
+So:
+
+servlet-name
+      ↓
+   second
+      ↓
+servlet-class
+      ↓
+SecondServlet
+
+If your Java class has a package:
+
+package servlets;
+
+public class SecondServlet extends GenericServlet {
+
+}
+
+then you write:
+
+<servlet-class>servlets.SecondServlet</servlet-class>
+
+Because the fully qualified class name is:
+
+servlets.SecondServlet
+6. Now <servlet-mapping>
+
+This is where the URL comes into the picture.
+
+<servlet-mapping>
+    <servlet-name>second</servlet-name>
+    <url-pattern>/second</url-pattern>
+</servlet-mapping>
+
+This tells Tomcat:
+
+"When the user requests /second, execute the servlet named second."

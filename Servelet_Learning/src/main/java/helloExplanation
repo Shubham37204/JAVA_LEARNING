@@ -1,0 +1,360 @@
+1. First understand what happens
+
+You have:
+
+@WebServlet("/first")
+public class Hello implements Servlet
+
+This means:
+
+"Tomcat, whenever a request comes to /first, use the Hello Servlet."
+
+So if your application is:
+
+http://localhost:8080/MyApp
+
+and you visit:
+
+http://localhost:8080/MyApp/first
+
+Tomcat finds:
+
+/first
+   ↓
+Hello Servlet
+
+Then the Servlet lifecycle starts.
+
+2. Your class
+public class Hello implements Servlet
+
+Servlet is an interface.
+
+You're saying:
+
+My Hello class is going to behave as a Servlet.
+
+Because you are implementing the Servlet interface, Java says:
+
+"Okay, then you must provide all the methods required by Servlet."
+
+That's why you have these 5 methods:
+
+init()
+service()
+destroy()
+getServletConfig()
+getServletInfo()
+3. This variable
+private ServletConfig servletConfig;
+
+For now, don't worry too much about ServletConfig.
+
+Just understand:
+
+This is a variable inside your Servlet that will hold configuration information provided by Tomcat.
+
+It's private:
+
+private ServletConfig servletConfig;
+
+So only this class directly accesses it.
+
+4. Then init()
+@Override
+public void init(ServletConfig servletConfig) throws ServletException {
+    this.servletConfig = servletConfig;
+    System.out.println("Hello World");
+}
+
+This is the first important method.
+
+When Tomcat creates your Servlet, it calls:
+
+init()
+Think:
+Tomcat
+   ↓
+Creates Hello Servlet
+   ↓
+Calls init()
+
+And Tomcat gives init() a ServletConfig object:
+
+init(ServletConfig servletConfig)
+
+You then save that object:
+
+this.servletConfig = servletConfig;
+
+Remember your Java concept of this:
+
+this.servletConfig
+
+means:
+
+The servletConfig variable belonging to this Hello object.
+
+While:
+
+servletConfig
+
+is the parameter received by init().
+
+So:
+
+this.servletConfig = servletConfig;
+
+means:
+
+Take the ServletConfig given by Tomcat and store it inside my object.
+
+5. Then this executes
+System.out.println("Hello World");
+
+This prints:
+
+Hello World
+
+in the Tomcat/server console.
+
+It does NOT print in the browser.
+
+So:
+
+Tomcat console
+       ↑
+System.out.println()
+6. Now the important part: service()
+@Override
+public void service(
+        ServletRequest servletRequest,
+        ServletResponse servletResponse
+) throws ServletException, IOException {
+
+    System.out.println("Hello World servoice");
+}
+
+This method is used to handle a request.
+
+Suppose you visit:
+
+http://localhost:8080/MyApp/first
+
+The flow is:
+
+Browser
+   |
+   | GET /first
+   ↓
+Tomcat
+   |
+   | finds @WebServlet("/first")
+   ↓
+Hello Servlet
+   |
+   ↓
+service()
+
+So Tomcat calls:
+
+service(...)
+7. What are these two things?
+ServletRequest servletRequest
+ServletResponse servletResponse
+
+Think very simply:
+
+ServletRequest
+
+Information coming from the browser.
+
+Browser
+   |
+   | Request
+   ↓
+ServletRequest
+
+For example, later you might receive:
+
+username = Shubham
+age = 22
+
+through the request.
+
+ServletResponse
+
+Information going back to the browser.
+
+Servlet
+   |
+   | Response
+   ↓
+ServletResponse
+   |
+   ↓
+Browser
+
+For example:
+
+<h1>Hello Shubham</h1>
+
+could be sent as the response.
+
+8. But your code isn't sending a response yet
+
+You currently have:
+
+System.out.println("Hello World servoice");
+
+That means:
+
+Browser
+   ↓
+Request
+   ↓
+Servlet
+   ↓
+service()
+   ↓
+System.out.println()
+   ↓
+Tomcat console
+
+It does not mean:
+
+Browser
+   ↓
+Hello World
+
+To actually send something to the browser, you'll later use:
+
+servletResponse
+
+For example, you'll learn something like:
+
+PrintWriter out = servletResponse.getWriter();
+out.println("Hello World");
+
+Then the response can go back to the browser.
+
+9. Then destroy()
+@Override
+public void destroy() {
+    System.out.println("Hello World destroyed");
+}
+
+This happens when Tomcat is destroying/removing the Servlet.
+
+Think:
+
+Servlet created
+     ↓
+init()
+     ↓
+service()
+     ↓
+service()
+     ↓
+service()
+     ↓
+...
+     ↓
+destroy()
+
+destroy() is basically:
+
+"I'm done with this Servlet. Do your cleanup."
+
+Again:
+
+System.out.println(...)
+
+prints to the server console.
+
+10. getServletConfig()
+@Override
+public ServletConfig getServletConfig() {
+    return this.servletConfig;
+}
+
+Earlier you did:
+
+this.servletConfig = servletConfig;
+
+Now you're returning it:
+
+return this.servletConfig;
+
+So simply:
+
+Tomcat gives Config
+       ↓
+init()
+       ↓
+store Config
+       ↓
+getServletConfig()
+       ↓
+return Config
+11. getServletInfo()
+@Override
+public String getServletInfo() {
+    return "shubham";
+}
+
+This just returns some information about your Servlet.
+
+You wrote:
+
+return "shubham";
+
+So if something asks your Servlet for its information, it gets:
+
+shubham
+
+It's not important for your basic Servlet flow right now.
+
+12. Now put the whole thing together
+
+Your code is basically doing this:
+
+                TOMCAT
+                  |
+                  | creates Servlet
+                  ↓
+             Hello Servlet
+                  |
+                  ↓
+                init()
+                  |
+                  | stores ServletConfig
+                  |
+                  ↓
+           Wait for requests
+                  |
+                  ↓
+       Browser requests /first
+                  |
+                  ↓
+               service()
+                  |
+                  | receives
+                  | ServletRequest
+                  | ServletResponse
+                  |
+                  ↓
+          "Hello World service"
+          printed in console
+                  |
+                  ↓
+       Wait for another request
+                  |
+                  ↓
+               service()
+                  |
+                  ↓
+                ...
+                  |
+                  ↓
+              destroy()

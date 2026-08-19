@@ -1,0 +1,15 @@
+"In Java, Throwable is the parent class for both Error and Exception.
+Errors generally represent serious JVM or system-level problems,
+ such as OutOfMemoryError or StackOverflowError,
+ and are not normally handled by application code.
+ Exceptions represent conditions that an application can
+ often anticipate and handle using try-catch.
+ Exceptions are further divided into checked exceptions
+and unchecked exceptions, with RuntimeException being
+ the parent of common unchecked exceptions such as
+ ArithmeticException and NullPointerException.
+
+
+ An unchecked exception is an exception that the compiler does not force you to handle or declare.
+ A checked exception ie subclasses of RuntimeException is an exception that Java's compiler forces
+ you to handle or declare

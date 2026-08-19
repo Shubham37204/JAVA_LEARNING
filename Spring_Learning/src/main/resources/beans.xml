@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--    Doing without the interface ie no computer interface-->
+    <!--    Setter injection to set value for name-->
+<!--    <bean id="dev" class="org.raman.Dev">-->
+<!--        <property name="name" value="Shubham"/>-->
+<!--    </bean>-->
+
+    <!--    Construction Injection for name-->
+<!--    <bean id="dev1" class="org.raman.Dev">-->
+<!--       <constructor-arg value="Shubham"/>-->
+<!--    </bean>-->
+
+
+<!--    Setter injection for laptop-->
+<!--    <bean id="dev" class="org.raman.Dev">-->
+<!--        <property name="laptop" ref="lap1"/>-->
+<!--    </bean>-->
+
+    <!--    Construction Injection for laptop-->
+<!--    <bean id="dev" class="org.raman.Dev">-->
+<!--        <constructor-arg ref="lap1"/>-->
+<!--    </bean>-->
+<!--    <bean id="lap1" class="org.raman.Laptop"/>-->
+
+
+<!--    Doing with the interface ie computer interface-->
+        <bean id="dev" class="org.raman.Dev">
+<!--            <property name="computer" ref="lap1"/>-->
+                <property name="computer" ref="desk1"/>
+        </bean>
+        <bean id="lap1" class="org.raman.Laptop"/>
+        <bean id="desk1" class="org.raman.Dekstop"/>
+
+</beans>

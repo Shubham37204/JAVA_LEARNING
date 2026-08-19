@@ -1,0 +1,34 @@
+Connection is an interface provided by the JDBC API. It defines the rules/methods for working with a database connection,
+ but it doesn't contain the database-specific implementation. The JDBC Driver provided by the database vendor implements that interface and knows how to communicate with that particular database. The driver establishes the actual connection/session between my Java application and the database, and then gives me a Connection object that I can use through the Connection interface.
+
+And the flow is:
+
+Java Application
+       ↓
+Connection interface
+       ↓
+DriverManager
+       ↓
+JDBC Driver (MySQL)
+       ↓
+MySQL Database
+
+More precisely:
+
+Connection
+   = WHAT operations are available
+
+JDBC Driver
+   = HOW those operations actually work for MySQL
+
+DriverManager
+   = Finds/uses the appropriate driver and obtains the connection
+🔥 One sentence to lock it in
+
+JDBC API defines the rules, DriverManager finds/uses the right driver, and the JDBC Driver actually talks to the database and establishes the connection.
+
+----------------------------------------------------------
+
+need of student.java file:
+When we retrieve a student record from the database, we can represent that complete record as a Student object in Java.
+This is called mapping a database row to a Java object.

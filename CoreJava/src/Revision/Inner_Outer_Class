@@ -1,0 +1,49 @@
+
+                 JAVA CLASSES
+                     │
+                     ↓
+          ┌─────────────────────┐
+          │ Normal Class/Object │
+          └──────────┬──────────┘
+                     │
+              Need reuse/
+              specialization
+                     ↓
+          ┌─────────────────────┐
+          │    Inheritance      │
+          └──────────┬──────────┘
+                     │
+             Need different
+             behavior through
+             same parent ref
+                     ↓
+          ┌─────────────────────┐
+          │ Runtime Polymorphism│
+          └──────────┬──────────┘
+                     │
+             achieved through
+                     ↓
+          ┌─────────────────────┐
+          │ Dynamic Method      │
+          │ Dispatch            │
+          └─────────────────────┘
+
+
+       A DIFFERENT PROBLEM
+               │
+               ↓
+    ┌─────────────────────────┐
+    │      Inner Class        │
+    │                         │
+    │ class A {               │
+    │    class B { }          │
+    │ }                       │
+    └───────────┬─────────────┘
+                │
+         Need class only once
+                ↓
+    ┌─────────────────────────┐
+    │   Anonymous Inner Class │
+    │                         │
+    │ new A() { ... }         │
+    └─────────────────────────┘
