@@ -1,4 +1,4 @@
-package com.webproject.JavaWebProject;
+package com.webproject.SpringDataJPA;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

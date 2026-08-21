@@ -6,6 +6,8 @@ build/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 # Compiled class file
 *.class
@@ -54,4 +56,3 @@ nbdist/
 .DS_Store
 Thumbs.db
 desktop.ini
-SpringRESTAPIUsingSpringBoot

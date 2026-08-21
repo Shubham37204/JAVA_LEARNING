@@ -1,10 +1,10 @@
-package com.webproject.SpringDataJPA;
+package com.JDBC2.SpringBootJDBC;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JavaWebProjectApplicationTests {
+class SpringBootJdbcApplicationTests {
 
 	@Test
 	void contextLoads() {

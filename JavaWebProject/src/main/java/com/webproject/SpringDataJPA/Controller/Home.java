@@ -1,4 +1,4 @@
-package com.webproject.JavaWebProject.Controller;
+package com.webproject.SpringDataJPA.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

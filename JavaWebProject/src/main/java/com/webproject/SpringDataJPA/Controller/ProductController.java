@@ -1,7 +1,7 @@
-package com.webproject.JavaWebProject.Controller;
+package com.webproject.SpringDataJPA.Controller;
 
-import com.webproject.JavaWebProject.Model.Product;
-import com.webproject.JavaWebProject.Service.ProductServices;
+import com.webproject.SpringDataJPA.Model.Product;
+import com.webproject.SpringDataJPA.Service.ProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

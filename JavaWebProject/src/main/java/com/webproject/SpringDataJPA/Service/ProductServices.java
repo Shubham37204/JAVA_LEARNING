@@ -1,6 +1,6 @@
-package com.webproject.JavaWebProject.Service;
+package com.webproject.SpringDataJPA.Service;
 
-import com.webproject.JavaWebProject.Model.Product;
+import com.webproject.SpringDataJPA.Model.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

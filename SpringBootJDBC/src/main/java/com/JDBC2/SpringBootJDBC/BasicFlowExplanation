@@ -1,0 +1,553 @@
+1. The big picture
+                    Spring Boot Application
+                           │
+                           ▼
+                 Spring creates beans
+                           │
+          ┌────────────────┼────────────────┐
+          ▼                ▼                ▼
+        Alien           AlienRepo       JdbcTemplate
+      @Component       @Repository       Auto-configured
+          │                │                  │
+          └────────────────┴──────────────────┘
+                           │
+                           ▼
+                        H2 Database
+                           │
+              ┌────────────┴────────────┐
+              ▼                         ▼
+         schema.sql                  data.sql
+       Creates table               Inserts data
+              │                         │
+              └────────────┬────────────┘
+                           ▼
+                       alien table
+2. SpringBootJdbcApplication — the starting point
+@SpringBootApplication
+public class SpringBootJdbcApplication {
+
+@SpringBootApplication tells Spring Boot:
+
+This is the main application. Start Spring from here.
+
+It also enables component scanning. Since your other classes are inside subpackages of:
+
+com.JDBC2.SpringBootJDBC
+
+Spring can find:
+
+com.JDBC2.SpringBootJDBC.Model.Alien
+com.JDBC2.SpringBootJDBC.Repo.AlienRepo
+Starting Spring
+ApplicationContext context =
+    SpringApplication.run(SpringBootJdbcApplication.class, args);
+
+This line starts the entire Spring Boot application.
+
+ApplicationContext
+
+Think of it as a container/warehouse managed by Spring.
+
+Spring scans your project and creates objects called beans.
+
+After this line runs, conceptually:
+
+ApplicationContext
+│
+├── Alien bean
+├── AlienRepo bean
+├── JdbcTemplate bean
+├── DataSource bean
+└── many other Spring beans
+3. Alien class — your Model
+@Component
+@Scope("prototype")
+public class Alien {
+@Component
+
+This tells Spring:
+
+"Please manage objects of this class."
+
+So Alien becomes a Spring bean.
+
+@Scope("prototype")
+
+This is particularly important.
+
+By default, Spring beans are:
+
+singleton
+
+Meaning:
+
+context.getBean(Alien.class)
+        ↓
+same object
+
+
+context.getBean(Alien.class)
+        ↓
+same object again
+
+But you used:
+
+@Scope("prototype")
+
+Now every request gives you a new Alien object:
+
+Alien alien1 = context.getBean(Alien.class);
+Alien alien2 = context.getBean(Alien.class);
+
+Conceptually:
+
+alien1 ──► Alien object #1
+alien2 ──► Alien object #2
+
+So:
+
+Alien alien = context.getBean(Alien.class);
+
+asks Spring:
+
+Give me an Alien object.
+
+Setting the values
+alien.setId(1);
+alien.setName("Alien");
+alien.setTech("java");
+
+Now your Java object contains:
+
+Alien object
+├── id   = 1
+├── name = "Alien"
+└── tech = "java"
+
+At this point, nothing has been saved to the database yet.
+
+This is just a Java object in memory.
+
+4. AlienRepo — Database layer
+@Repository
+public class AlienRepo {
+
+@Repository tells Spring:
+
+This class handles database operations.
+
+It also makes AlienRepo a Spring-managed bean.
+
+So you can do:
+
+AlienRepo repo = context.getBean(AlienRepo.class);
+
+Conceptually:
+
+ApplicationContext
+       │
+       └── gives you ──► AlienRepo object
+5. JdbcTemplate
+
+Inside AlienRepo:
+
+private JdbcTemplate temp;
+
+JdbcTemplate is a Spring JDBC helper.
+
+Without JdbcTemplate, traditional JDBC looks something like:
+
+Connection
+    ↓
+Statement / PreparedStatement
+    ↓
+Execute SQL
+    ↓
+Process ResultSet
+    ↓
+Close connection
+
+With JdbcTemplate, Spring handles much of this for you.
+
+You mainly write:
+
+SQL + values
+Dependency Injection
+
+You wrote:
+
+@Autowired
+public void setTemp(JdbcTemplate temp) {
+    this.temp = temp;
+}
+
+This is setter injection.
+
+Conceptually:
+
+Spring creates AlienRepo
+        │
+        ▼
+Spring sees @Autowired
+        │
+        ▼
+"AlienRepo needs JdbcTemplate"
+        │
+        ▼
+Spring provides JdbcTemplate
+        │
+        ▼
+temp = JdbcTemplate object
+
+So your repository becomes:
+
+AlienRepo
+    │
+    └── temp ──► JdbcTemplate
+                       │
+                       └── H2 Database
+6. What happens with schema.sql
+
+Your schema.sql contains:
+
+create table alien (
+ id int primary key,
+ name varchar(50),
+ tech varchar(50)
+);
+
+When Spring Boot starts, it finds schema.sql and executes it.
+
+So:
+
+Spring Boot starts
+      │
+      ▼
+Finds schema.sql
+      │
+      ▼
+Executes CREATE TABLE
+      │
+      ▼
+H2 Database
+      │
+      ▼
+alien table created
+
+Your table becomes conceptually:
+
+id	name	tech
+
+7. What happens with data.sql
+
+Your data.sql contains:
+
+insert into alien (id, name, tech) values (101, 'Kiran', 'Blockchain');
+
+
+insert into alien (id, name, tech) values (102, 'Shubham', 'Java');
+
+
+insert into alien (id, name, tech) values (103, 'Rahul', 'Spring Boot');
+
+Spring Boot executes these after the table has been created.
+
+The database now contains:
+
+id	name	tech
+101	Kiran	Blockchain
+102	Shubham	Java
+103	Rahul	Spring Boot
+8. Your Java code adds one more Alien
+
+You create:
+
+Alien alien = context.getBean(Alien.class);
+
+
+alien.setId(1);
+alien.setName("Alien");
+alien.setTech("java");
+
+Now:
+
+Java memory:
+
+
+Alien
+├── id = 1
+├── name = Alien
+└── tech = java
+
+Then:
+
+repo.save(alien);
+
+calls:
+
+public void save(Alien alien) {
+    String sql = "insert into alien(id,name,tech) values(?,?,?)";
+
+
+    int rows = temp.update(
+        sql,
+        alien.getId(),
+        alien.getName(),
+        alien.getTech()
+    );
+
+
+    System.out.print(rows);
+}
+9. Understanding ?
+
+Your SQL is:
+
+insert into alien(id,name,tech) values(?,?,?)
+
+The ? are placeholders.
+
+These values:
+
+alien.getId(),
+alien.getName(),
+alien.getTech()
+
+replace them in order:
+
+First ?  → 1
+Second ? → "Alien"
+Third ?  → "java"
+
+Conceptually, the database receives:
+
+insert into alien(id,name,tech)
+values(1, 'Alien', 'java');
+
+So your table now becomes:
+
+id	name	tech
+101	Kiran	Blockchain
+102	Shubham	Java
+103	Rahul	Spring Boot
+1	Alien	java
+10. What is temp.update()?
+int rows = temp.update(sql, ...);
+
+update() is generally used for SQL operations that modify data:
+
+INSERT
+UPDATE
+DELETE
+
+It returns the number of affected rows.
+
+Since one row was inserted:
+
+rows = 1
+
+Therefore:
+
+System.out.print(rows);
+
+prints:
+
+1
+
+Meaning:
+
+One row was successfully affected.
+
+11. findAll() — reading the data
+
+Now you call:
+
+System.out.println(repo.findAll());
+
+Inside findAll():
+
+String sql = "select * from alien";
+
+This means:
+
+Get every row from the alien table.
+
+The database result is conceptually:
+
+ResultSet
+│
+├── Row 1 → 101, Kiran, Blockchain
+├── Row 2 → 102, Shubham, Java
+├── Row 3 → 103, Rahul, Spring Boot
+└── Row 4 → 1, Alien, java
+
+But the database gives you rows. Your Java application wants:
+
+List<Alien>
+
+So we need a conversion.
+
+That is the job of RowMapper.
+
+12. What is RowMapper<Alien>?
+RowMapper<Alien> rowMapper = new RowMapper<Alien>() {
+
+A RowMapper says:
+
+"For every database row, tell me how to convert it into an Alien Java object."
+
+Your code:
+
+public Alien mapRow(ResultSet rs, int rowNum) throws SQLException {
+    Alien alien = new Alien();
+
+
+    alien.setId(rs.getInt("id"));
+    alien.setName(rs.getString("name"));
+    alien.setTech(rs.getString("tech"));
+
+
+    return alien;
+}
+
+For this database row:
+
+id     = 101
+name   = Kiran
+tech   = Blockchain
+
+You create:
+
+Alien object
+├── id = 101
+├── name = Kiran
+└── tech = Blockchain
+
+This happens for every row.
+
+Conversion process
+DATABASE                          JAVA
+────────                          ────
+
+
+Row 1 ───────────────────────► Alien object #1
+101, Kiran, Blockchain
+
+
+Row 2 ───────────────────────► Alien object #2
+102, Shubham, Java
+
+
+Row 3 ───────────────────────► Alien object #3
+103, Rahul, Spring Boot
+
+
+Row 4 ───────────────────────► Alien object #4
+1, Alien, java
+
+Finally:
+
+temp.query(sql, rowMapper);
+
+returns:
+
+List<Alien>
+13. Why does printing the list work nicely?
+
+You overrode:
+
+@Override
+public String toString()
+
+Without it, Java would print something ugly like:
+
+[com.JDBC2.SpringBootJDBC.Model.Alien@1a2b3c]
+
+But because you have:
+
+@Override
+public String toString() {
+    return "Alien{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", tech='" + tech + '\'' +
+            '}';
+}
+
+You get something readable:
+
+[
+ Alien{id=101, name='Kiran', tech='Blockchain'},
+ Alien{id=102, name='Shubham', tech='Java'},
+ Alien{id=103, name='Rahul', tech='Spring Boot'},
+ Alien{id=1, name='Alien', tech='java'}
+]
+Complete execution flow
+
+This is the most important thing to remember:
+
+1. main() starts
+        ↓
+2. SpringApplication.run()
+        ↓
+3. Spring Boot starts ApplicationContext
+        ↓
+4. Spring finds @Component Alien
+        ↓
+5. Spring finds @Repository AlienRepo
+        ↓
+6. Spring configures H2 database + JdbcTemplate
+        ↓
+7. schema.sql runs
+        ↓
+   alien table is created
+        ↓
+8. data.sql runs
+        ↓
+   Kiran, Shubham, Rahul inserted
+        ↓
+9. Get Alien bean from Spring
+        ↓
+10. Set id, name, tech
+        ↓
+11. Get AlienRepo from Spring
+        ↓
+12. repo.save(alien)
+        ↓
+13. JdbcTemplate executes INSERT
+        ↓
+14. New Alien is saved
+        ↓
+15. repo.findAll()
+        ↓
+16. SELECT * FROM alien
+        ↓
+17. RowMapper converts each row → Alien object
+        ↓
+18. List<Alien> returned
+        ↓
+19. System.out.println() prints the list
+One important distinction
+@Component / @Repository
+        ↓
+Spring manages your Java objects
+
+
+JdbcTemplate
+        ↓
+Communicates with the database
+
+
+schema.sql
+        ↓
+Creates database structure
+
+
+data.sql
+        ↓
+Provides initial database data
+
+
+RowMapper
+        ↓
+Converts database rows → Java objects

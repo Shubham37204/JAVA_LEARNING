@@ -1,4 +1,4 @@
-package com.webproject.JavaWebProject;
+package com.webproject.SpringDataJPA;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

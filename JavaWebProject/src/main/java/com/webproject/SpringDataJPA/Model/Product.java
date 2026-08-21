@@ -1,4 +1,4 @@
-package com.webproject.JavaWebProject.Model;
+package com.webproject.SpringDataJPA.Model;
 
 public class Product {
     private int prodid;
