@@ -1,38 +1,33 @@
-package com.webproject.SpringDataJPA.Service;
+package com.Shubham.ecom_backend.Service;
 
-import com.webproject.SpringDataJPA.Model.Product;
-import com.webproject.SpringDataJPA.Repo.ProductRepo;
+import com.Shubham.ecom_backend.Model.Product;
+import com.Shubham.ecom_backend.Repo.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ProductServices {
 
     @Autowired
-    ProductRepo repo;
+    private ProductRepo repo;
 
-//    List<Product> products= new ArrayList<>( Arrays.asList(
-//            new Product(101,"android",50000),
-//            new Product(102,"iphone",420000))) ;
+    public List<Product> getAllProducts(){
+       return repo.findAll();
+    };
 
-    public List<Product> getProducts(){
-        return repo.findAll();
+    public Product getProductById( int id){
+        return repo.findById(id).orElse(null);
+    };
+
+    public Product addProduct(Product product, MultipartFile imageFile) throws IOException {
+        product.setImageName(imageFile.getOriginalFilename());
+        product.setImageType(imageFile.getContentType());
+        product.setImageData(imageFile.getBytes());
+        return repo.save(product);
     }
 
-    public Product getProductById(int prodId) {
-        return repo.findById(prodId).orElse(null);
-    }
-
-    public void addProduct(Product product){
-        repo.save(product);
-    }
-
-    public void updateProduct(Product prodId){
-        repo.save(prodId);
-    }
-
-    public void deleteProduct(int prodId){
-        repo.deleteById(prodId);
-    }
 }

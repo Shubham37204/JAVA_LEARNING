@@ -1,37 +1,38 @@
 package com.webproject.SpringDataJPA.Service;
 
 import com.webproject.SpringDataJPA.Model.Product;
+import com.webproject.SpringDataJPA.Repo.ProductRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class ProductServices {
 
-    List<Product> products= new ArrayList<>( Arrays.asList(
-            new Product(101,"android",50000),
-            new Product(102,"iphone",420000))) ;
+    @Autowired
+    ProductRepo repo;
+
+//    List<Product> products= new ArrayList<>( Arrays.asList(
+//            new Product(101,"android",50000),
+//            new Product(102,"iphone",420000))) ;
 
     public List<Product> getProducts(){
-        return products;
+        return repo.findAll();
     }
 
-
     public Product getProductById(int prodId) {
-        return products.stream().filter(p->p.getProdid() == prodId)
-                .findFirst().orElse(null);
+        return repo.findById(prodId).orElse(null);
     }
 
     public void addProduct(Product product){
-        products.add(product);
+        repo.save(product);
     }
 
+    public void updateProduct(Product prodId){
+        repo.save(prodId);
+    }
+
+    public void deleteProduct(int prodId){
+        repo.deleteById(prodId);
+    }
 }
-
-//@Service tells Spring:
-// "Create and manage an object of this class."
-//So Spring creates a ProductServices object and keeps it inside the Spring container.
-
-

@@ -1,41 +1,47 @@
-package com.webproject.SpringDataJPA.Controller;
+package com.Shubham.ecom_backend.Controller;
 
-import com.webproject.SpringDataJPA.Model.Product;
-import com.webproject.SpringDataJPA.Service.ProductServices;
+import com.Shubham.ecom_backend.Model.Product;
+import com.Shubham.ecom_backend.Service.ProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-public class ProductController {
+@RequestMapping("/api")
+@CrossOrigin
+public  class ProductController{
 
-        @Autowired
-        ProductServices productServices;
+    @Autowired
+    private ProductServices services;
 
-        @GetMapping("/product")
-        public List<Product> getProducts(){
-            return  productServices.getProducts();
-        }
+    @GetMapping("/product")
+    public ResponseEntity<List<Product>> getProducts(){
+        return new ResponseEntity<>(services.getAllProducts(), HttpStatus.OK);
+    }
 
-        @GetMapping("/product/{prodId}")
-       public Product getProductById(@PathVariable int prodId) {
-            return productServices.getProductById(prodId);
-       }
+    @GetMapping("/product/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable int id){
+    Product product = services.getProductById(id);
+        if(product!=null){
+          return new ResponseEntity<>(product, HttpStatus.OK);
+        }else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+         }
+    }
 
-       @PostMapping("/product")
-       public void addProduct(@RequestBody Product prod) {
-                productServices.addProduct(prod);
-       }
+    @PostMapping("/product")
+    public ResponseEntity<Product> addProduct(@RequestBody Product product,
+                                              @RequestPart MultipartFile imageFile){
+      try {
+          Product prods = services.addProduct(product,imageFile);
+          return new ResponseEntity<>(prods, HttpStatus.CREATED);
+      }catch (Exception e){
+          return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      }
 
-       @PatchMapping("/product")
-       public void updateProduct(@RequestBody Product prod) {
-            productServices.updateProduct(prod);
-       }
-
-       @DeleteMapping("/product/{prodId}")
-       public void deleteProduct(@RequestBody int prod) {
-            productServices.deleteProduct(prod);
-       }
+    }
 }
-

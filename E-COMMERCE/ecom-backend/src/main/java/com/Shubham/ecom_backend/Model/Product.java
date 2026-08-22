@@ -1,54 +1,37 @@
-package com.webproject.SpringDataJPA.Model;
+package com.Shubham.ecom_backend.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
 
     @Id
-    private int prodid;
-    private String prodName;
-    private int price;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    public Product() {}
+    private String name;
+    private String desc;
+    private String brand;
+    private BigDecimal price;
+    private String category;
 
-    public Product( int prodid, String prodName, int price) {
-        this.prodid = prodid;
-        this.prodName = prodName;
-        this.price = price;
-    }
+    private int stockQuantity;
 
-    public String getProdName() {
-        return prodName;
-    }
+    private String releaseDate;
 
-    public void setProdName(String prodName) {
-        this.prodName = prodName;
-    }
+    private boolean available;
 
-    public int getProdid() {
-        return prodid;
-    }
+    private String imageName;
+    private String imageType;
 
-    public void setProdid(int prodid) {
-        this.prodid = prodid;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "prodid=" + prodid +
-                ", prodName='" + prodName + '\'' +
-                ", price=" + price +
-                '}';
-    }
+    @Lob
+    private byte[] imageData;
 }

@@ -1,9 +1,17 @@
 package com.webproject.SpringDataJPA.Model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Product {
+
+    @Id
     private int prodid;
     private String prodName;
     private int price;
+
+    public Product() {}
 
     public Product( int prodid, String prodName, int price) {
         this.prodid = prodid;
@@ -44,4 +52,3 @@ public class Product {
                 '}';
     }
 }
-//So Product is basically your data model.
