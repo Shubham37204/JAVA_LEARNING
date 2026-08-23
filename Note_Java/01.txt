@@ -1,0 +1,96 @@
+1) What is a programming language
+
+2) What is Technology
+
+3) What is Framework
+
+
+=======================
+Programming Language
+=======================
+
+=> Language is a medium to communicate
+
+		1) Human Languages
+
+			Ex: English, Hindi, Telugu
+
+		2) Programming Languages
+
+			Ex: C, C++, Java, Python, C#
+
+
+=> Programming Languages are used to communicate with Computer	
+
+=> Every P.L contains set of syntaxes and rules		
+
+=> Using P.L we can develop software applications
+
+Note: Java is a programming language.
+
+
+
+======================
+Software Technologies
+======================
+
+-> Technologies are developed based on progrmming languages only
+
+	Ex: Servlets, JSP
+
+-> Technogies are used to develop different types of applications
+
+-> We need to write duplicate code in project at serveral places
+
+	Ex :
+
+		1) get connection
+		2) create stmt
+		3) execute query
+		4) process results
+
+		5) capture form data
+		6) validate form data
+		7) convert form data to DTO obj
+
+
+100 Database tables
+
+100 DAO classes
+
+In every DAO we have 10 methods
+
+100 * 10 => 1000 methods
+
+
+2 Types of logics
+
+		1) Common Logics  (common to most project)
+
+		2) Business Logics  (specific to the a particular project)
+
+
+	Challenges : 
+
+			1) Duplicate Code (Boiler Plate Code)
+			2) More lines of code
+			3) More  Exceptions
+			4) Maintenence		
+
+==============
+Frameworks		
+==============
+
+-> It is a piece of software (semi developed software)
+
+-> Framework provides common logics required for application development
+
+-> Using frameworks we can develop applications quickly
+
+-> If we are using frameworks then we need to focus only on  business logics.
+
+		1) no duplicate code
+		2) faster development
+		3) less lines of code
+		4) less no of bugs
+		5) easy maintenence
