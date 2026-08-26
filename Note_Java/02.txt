@@ -5,7 +5,7 @@ Layered Architecture
 1) Presentation Layer   : User interface(VIEWS)
 
 	Technologies :-> JSP(old way to create views(ui)) 
-		          -> Angular / React / Vue JS (old way to create views(ui))
+		          -> Angular / React / Vue JS (new way to create views(ui))
 
 2) Web Layer : Controllers (Handles request & response)
 
@@ -20,7 +20,7 @@ Layered Architecture
 4) Persistence Layer : DAO classes (DB communication)
 
 		Technologies : -> JDBC  (old way to create db but we are doing manually)
-			           -> Hibernate (Newer way to create DB)	
+			           -> Hibernate (Newer way to communicate with and persist objects to a database)	
 
 =============================
 What is Spring Framework ?
@@ -34,10 +34,10 @@ What is Spring Framework ?
 
 -> Spring released in the year of 2004 (1.x)
 
--> The current  version of spring is 6.x (2022)
+-> The current version of spring is 6.x (2022)
 
 -> Each part of spring architecture are independent and
- hence they can be used as an indivsuals part and 
+ hence they can be used as an individuals part and 
  can be integrated with each other or 3rd party
 
 =====================
@@ -70,7 +70,7 @@ Spring Architecture
 
 10) Spring Cloud
 
-11) Spring Data .....
+11) Spring Data 
 
 Note: We can use any module based on our project requirement.
 

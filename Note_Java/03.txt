@@ -10,8 +10,8 @@ How one java class method can access another java class method
 IS-A Relation
 ================
 
+//dependent class
 public class Engine {
-	
 	public int start() {
 		System.out.println("Engine Starting...");
 		return 1;
@@ -19,11 +19,10 @@ public class Engine {
 
 }
 
+//target class
 public class Car extends Engine {
-
 	public void drive() {
 		int status = super.start();
-
 		if (status >= 1) {
 			System.out.println("Journey Started...");
 		} else {
@@ -55,7 +54,6 @@ Conclusion
 =============
 
 => With IS-A & HAS-A relation our classes are tightly coupled.
-
 
 => Developing classs with tighlty coupling not recommended.
 
@@ -107,13 +105,8 @@ setter Injection
 
 => Injecting one class object into another class object using setter method 
 
-
-
 		Ex:   Car c = new Car();
 			 c.setEng(new DieselEng());
-
-
-
 
 
 Q) If we perform both CI & SI then what will happen ?
@@ -127,10 +120,6 @@ Afte CI, SI will happen
 SI will override CI
 
 So the final value will be SI injected value/obj.
-
-
-
-
 
 
 =====================
@@ -161,7 +150,6 @@ Requirement: Develop BillPayment application usin Strategy Design Pattern.
 	4) Credit Card
 
 
-
 =====================================
 IOC Container (Inversion Of Control)
 =====================================
@@ -178,8 +166,6 @@ What is Spring Bean
 
 => The java classes which are managed by IOC are called as Spring Bean classes.
 
-
-
 =========
 Maven
 =========
@@ -194,7 +180,6 @@ Maven
 
 => Using Maven we can create both stand-alone & web apps.
 
-
 #### Maven Setup  :: https://youtu.be/hV1OWzYpzxo?si=jD7vz3oJeRVclTxF
 
 ###########  Note: Alternate for maven is Gradle. ##############
@@ -206,7 +191,6 @@ Creating Maven Project
 ========================
 
 -> We can create maven project using CLI & IDE
-
 
 -> Select File -> New -> Maven Project
 
@@ -240,8 +224,6 @@ Creating Maven Project
 
 
 => We can search for maven dependencies using www.mvnrepository.com
-
-
 
 ----------------------------------
 public interface IEngine {
