@@ -1,57 +1,15 @@
 ================================================================
-How one java class method can access another java class method	
+How one java class method can access another java class method	(called as dependency)
 ==================================================================
 
-1) By Inheritence (IS-A)
+1) By Inheritence or By Extending Properties (IS-A)
 
-2) By Composition (HAS-A)	
-
-===============
-IS-A Relation
-================
-
-//dependent class
-public class Engine {
-	public int start() {
-		System.out.println("Engine Starting...");
-		return 1;
-	}
-
-}
-
-//target class
-public class Car extends Engine {
-	public void drive() {
-		int status = super.start();
-		if (status >= 1) {
-			System.out.println("Journey Started...");
-		} else {
-			System.out.println("Failed to start the engine...");
-		}
-	}
-}
-
-==================
-HAS-A relation
-==================
-
-public class Car  {
-	public void drive() {
-		
-		Engine eng = new Engine();
-		int status = eng.start();
-		
-		if (status >= 1) {
-			System.out.println("Journey Started...");
-		} else {
-			System.out.println("Failed to start the engine...");
-		}
-	}
-}
+2) By Composition or By creating Object (HAS-A)	
 
 =============
 Conclusion
 =============
+=> if a class is dependent(target) on another class(dependent) then it is called Dependenciy
 
 => With IS-A & HAS-A relation our classes are tightly coupled.
 
@@ -61,6 +19,7 @@ Conclusion
 
 => To develop classes with loosely coupling we will use Spring Core module.
 
+=> Tight coupling makes an application rigid, difficult to modify, test, and maintain.
 
 =============
 Spring Core
@@ -74,6 +33,7 @@ Spring Core
 		2) Dependency Injection (DI)
 		4) Autowiring 
 
+=>These help us manage objects and dependencies, reducing tight coupling and making applications easier to maintain, test, and modify.
 
 => By  using spring core concepts we can develop classs with loosely coupling.
 
@@ -89,6 +49,43 @@ Strategy Design Pattern
 
 3) Code should be open for extension and closed for modification
 
+Eg(lossing coupling): 
+
+interface Engine{public int start();}
+
+public class PetrolEng implements Engine{
+	public int start(){sout("")}
+}
+
+public class DiesealEng implements Engine{
+	public int start(){sout("")}
+}
+
+public class car{
+	private Enginr eng;
+
+	//Constructor
+	public car(Engine eng){
+		this.eng=eng;
+	}
+
+	//setter Method
+	public void setEng(Engine eng){
+		this.eng=eng;
+	}
+
+	public void drive(){
+		int status = eng.start();
+		sout("")
+	}
+}
+
+//in main methods(without any constructor and no injection)
+//when we do this then engine eng get default values 
+ie null and and hence on calling c.drive we will get 
+null pointer exception 
+Car c = new car();
+c.drive()
 
 ========================
 Constructor Injection
@@ -97,7 +94,6 @@ Constructor Injection
 => Inject one class object into another class obj using constructor.
 
 	Ex : Car c = new Car(new PetrolEng());
-
 
 ========================
 setter Injection
@@ -111,13 +107,9 @@ setter Injection
 
 Q) If we perform both CI & SI then what will happen ?
 
-Ans) 
+Ans) CI will happen first at the time of obj creation
 
-CI will happen first at the time of obj creation
-
-Afte CI, SI will happen
-
-SI will override CI
+Afte CI, SI will happenSI will override CI
 
 So the final value will be SI injected value/obj.
 
@@ -128,7 +120,6 @@ Dependency Injection
 
 => The process of injecting dependent object into target object is called as dependency injection.
 
-		
 		Car is dependent on Engine
 
 		Controller is dependent on Service
@@ -148,7 +139,6 @@ Requirement: Develop BillPayment application usin Strategy Design Pattern.
 	2) Scanner
 	3) Debit Card
 	4) Credit Card
-
 
 =====================================
 IOC Container (Inversion Of Control)
