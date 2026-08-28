@@ -18,51 +18,19 @@ BillPayment bp = new BillPayment();                    // We create object
 CreditCardPayment cc = new CreditCardPayment();        // We create dependency
 bp.setPayment(cc);                                     // We inject dependency
 
-
+ 
 ====================
 What is Spring Bean
 ====================
 
 => The java classes which are managed by IOC are called as Spring Bean classes.
 
-=========
-Maven
-=========
-
-=> Maven is a build tool for java applications
-
-=> Maven developed by Apache Org
-
-=> Maven s/w developed by using Java language
-
-=> Maven is free & OSS
-
-=> Using Maven we can create both stand-alone & web apps.
-
-#### Maven Setup  :: https://youtu.be/hV1OWzYpzxo?si=jD7vz3oJeRVclTxF
-
-###########  Note: Alternate for maven is Gradle. ##############
-
-### Gradle Tutorial : https://youtu.be/I84f9Q5bFBA?si=8qs3Ue7N_E0bBQco
 
 ========================
 Creating Maven Project
 ========================
 
 -> We can create maven project using CLI & IDE
-
--> Select File -> New -> Maven Project
-
-			- Select simple project (stand-alone)
-
-			- groupId : in.ashokit
-
-			- artifactId : 01-Spring-IOC-App
-
-			- packaging : jar
-
-			- Click on Finish
-
 
 => Once project created we can see below folder structure
 
@@ -80,17 +48,16 @@ Creating Maven Project
 
 		- pom.xml (maven config file)
 
-
-
 => We can search for maven dependencies using www.mvnrepository.com
 
-----------------------------------
-public interface IEngine {
-	
-	public boolean start();
 
-}
-----------------------------------
+Eg1 :--
+----------------------------------------------------------
+
+public interface IEngine {public boolean start();}
+
+----------------------------------------------------------
+
 package in.ashokit.beans;
 
 public class DieselEng implements IEngine {
@@ -106,7 +73,9 @@ public class DieselEng implements IEngine {
 	}
 
 }
+
 ----------------------------------------------------------
+
 package in.ashokit.beans;
 
 public class PetrolEng implements IEngine {
@@ -122,7 +91,9 @@ public class PetrolEng implements IEngine {
 	}
 
 }
+
 ------------------------------------------------------------
+
 package in.ashokit.beans;
 
 public class Car {
@@ -149,7 +120,9 @@ public class Car {
 	}
 
 }
+
 ----------------------------------------------------------
+
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -166,6 +139,7 @@ public class Car {
 	</bean>
 
 </beans>
+
 -----------------------------------------------------------
 
 package in.ashokit.test;
@@ -189,10 +163,6 @@ public class Test {
 }
 
 
-
-################# Images : https://excalidraw.com/#json=kHW-i1ngkhEv_MoXPXhuu,GN4oLpM1nIXn0BybOPaS-Q
-
-
 =============
 Bean Scopes
 =============
@@ -214,25 +184,10 @@ Bean Scopes
 
 -> For prototype scoped beans IOC will create new object every time based on demand (lazy loading).
 
-
 -> To configure bean scope we will use "scope" attribute.
 
 	<bean id="credit" class="in.ashokit.CreditCardPayment" 
 					  scope="prototype" />
-
-
-
-===================
-Assinment
-===================
-
--> Develop Java application using Spring framework
-
-		Read book data from keyboard and insert into db table using spring-jdbc.			  
-
-
-
-
 
 
 ===========
