@@ -1,0 +1,313 @@
+
+=====================================
+IOC Container (Inversion Of Control)
+=====================================
+
+=> IOC is a principle which is responsible to manage(creating the object for the given class) and colloborate(injecting dependies) dependencies among the objects in the application.
+
+=> IOC will take care of Dependency Injection
+
+=> It will create dependent object and target object and then it will inject dependent obj into target object.
+
+=> IoC (Inversion of Control) is a principle where the responsibility for creating and managing objects is given to an external container/framework instead of the classes managing everything themselves. This helps achieve loose coupling, and the IoC container can perform Dependency Injection (DI).
+
+
+Without an IoC container, we manually do everything ourselves:
+
+BillPayment bp = new BillPayment();                    // We create object
+CreditCardPayment cc = new CreditCardPayment();        // We create dependency
+bp.setPayment(cc);                                     // We inject dependency
+
+
+====================
+What is Spring Bean
+====================
+
+=> The java classes which are managed by IOC are called as Spring Bean classes.
+
+=========
+Maven
+=========
+
+=> Maven is a build tool for java applications
+
+=> Maven developed by Apache Org
+
+=> Maven s/w developed by using Java language
+
+=> Maven is free & OSS
+
+=> Using Maven we can create both stand-alone & web apps.
+
+#### Maven Setup  :: https://youtu.be/hV1OWzYpzxo?si=jD7vz3oJeRVclTxF
+
+###########  Note: Alternate for maven is Gradle. ##############
+
+### Gradle Tutorial : https://youtu.be/I84f9Q5bFBA?si=8qs3Ue7N_E0bBQco
+
+========================
+Creating Maven Project
+========================
+
+-> We can create maven project using CLI & IDE
+
+-> Select File -> New -> Maven Project
+
+			- Select simple project (stand-alone)
+
+			- groupId : in.ashokit
+
+			- artifactId : 01-Spring-IOC-App
+
+			- packaging : jar
+
+			- Click on Finish
+
+
+=> Once project created we can see below folder structure
+
+		- src/main/java  (source code we will keep here)
+
+		- src/main/resources  (config files we will keep here)
+
+		- src/test/java (junit classes for unit testing)
+
+		- src/test/resources (junit related config files)
+
+		- target (.class files will be stored here)
+
+		- Maven Dependencies (downloaded jars/dependencies)
+
+		- pom.xml (maven config file)
+
+
+
+=> We can search for maven dependencies using www.mvnrepository.com
+
+----------------------------------
+public interface IEngine {
+	
+	public boolean start();
+
+}
+----------------------------------
+package in.ashokit.beans;
+
+public class DieselEng implements IEngine {
+
+	public DieselEng() {
+		System.out.println("DieselEng :: Constructor");
+	}
+
+	@Override
+	public boolean start() {
+		System.out.println("DieselEng starting.....");
+		return true;
+	}
+
+}
+----------------------------------------------------------
+package in.ashokit.beans;
+
+public class PetrolEng implements IEngine {
+	
+	public PetrolEng() {
+		System.out.println("Petrol Engine :: Constructor");
+	}
+
+	@Override
+	public boolean start() {
+		System.out.println("Petrol Engine starting...");
+		return true;
+	}
+
+}
+------------------------------------------------------------
+package in.ashokit.beans;
+
+public class Car {
+	
+	public Car() {
+		System.out.println("Car :: Constructor");
+	}
+
+	private IEngine eng;
+	
+	public void setEng(IEngine eng) {
+		this.eng = eng;
+		System.out.println("setEng() method called....");
+		System.out.println("Injected :: "+ eng.getClass().getName());
+	}
+
+	public void drive() {
+		boolean status = eng.start();
+		if (status) {
+			System.out.println("Journey Started...");
+		} else {
+			System.out.println("Engine fault...");
+		}
+	}
+
+}
+----------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+	<bean id="deng" class="in.ashokit.beans.DieselEng" />
+
+	<bean id="car" class="in.ashokit.beans.Car" >
+		<property name="eng" ref="peng"/>
+	</bean>
+
+</beans>
+-----------------------------------------------------------
+
+package in.ashokit.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import in.ashokit.beans.Car;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext context = 
+				new ClassPathXmlApplicationContext("spring-beans.xml");
+		
+		System.out.println("=======================");
+		
+		Car car = context.getBean(Car.class);
+		car.drive();
+	}           
+}
+
+
+
+################# Images : https://excalidraw.com/#json=kHW-i1ngkhEv_MoXPXhuu,GN4oLpM1nIXn0BybOPaS-Q
+
+
+=============
+Bean Scopes
+=============
+
+=> Bean Scope will decide how many objects should be created for spring bean class.
+
+=> We have 4 types of scopes
+
+		1) singleton   (by default)
+
+		2) Prototype
+
+		3) request
+
+		4) session
+
+
+-> For singleton scoped beans only one object will be created by IOC container at the time of IOC starting (eager loading)
+
+-> For prototype scoped beans IOC will create new object every time based on demand (lazy loading).
+
+
+-> To configure bean scope we will use "scope" attribute.
+
+	<bean id="credit" class="in.ashokit.CreditCardPayment" 
+					  scope="prototype" />
+
+
+
+===================
+Assinment
+===================
+
+-> Develop Java application using Spring framework
+
+		Read book data from keyboard and insert into db table using spring-jdbc.			  
+
+
+
+
+
+
+===========
+Autowiring
+===========
+
+-> We can perform dependency injection in 2 ways
+
+		1) Manual Wiring
+		2) Auto wiring
+
+=> Manual wiring means programmer will inform to IOC which is dependent obj using ref attribute like below
+
+	<bean id="pp" class="in.ashokit.PaymentProcessor">
+		<property name="payment" ref="debit" />
+	</bean>
+
+
+=> Auto wiring means IOC will identify dependent object and it will perform DI.
+
+=> In spring xml approach, by default autowiring is disabled.
+
+=> Autowiring having 4 modes
+
+				1) byName
+				2) byType
+				3) constructor
+				4) no (default)
+========
+byName
+========
+
+-> Based on target bean variable name IOC will identify dependent bean and it will inject it.
+
+Note: target bean variable name should match with bean id.
+
+-> If any bean id is not matching with target bean variable name then D.I will not happen.
+
+Note: Every bean should unique id.
+
+	<bean id="payment" class="in.ashokit.CreditCardPayment" />
+	<bean id="db" class="in.ashokit.DebitCardPayment" />
+
+	<bean id="pp" class="in.ashokit.PaymentProcessor"
+		autowire="byName" />
+
+========
+byType
+========
+
+-> Based on data type of variable IOC will identify dependent object.
+
+-> If variable data type is interface then it will check interface implemented beans.
+
+-> If we have more than one bean which are implementing interface then IOC will get confused to take decision. Then we will get ambuigity problem.
+
+-> We can resolve ambiguity problem in 2 ways
+
+			1) autowire-candidate = false
+
+			2) primary = true		
+
+=============
+constructor
+=============
+
+Note: When we go for byName or byType then IOC will perform Setter Injection with autowiring.
+
+-> If we want to perform Constructor Injection with Autowiring then we should configure autowire="constructor".
+
+Note : autowire=constructor will use byType mechanism to identify dependent object.	
+
+=====
+no
+=====
+
+=> It is default value which will not perform autowiring.
+
