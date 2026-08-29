@@ -14,12 +14,17 @@ IOC Container (Inversion Of Control)
 
 Without an IoC container, we manually do everything ourselves:
 
-BillPayment bp = new BillPayment();                    // We create object
-CreditCardPayment cc = new CreditCardPayment();        // We create dependency
+BillPayment bp = new BillPayment();                    // We create object (Dependent class)
+CreditCardPayment cc = new CreditCardPayment();        // We create dependency (Dependency)
 bp.setPayment(cc);                                     // We inject dependency
 
+Dependent = the class that needs something
+Dependency = the thing it needs
+Target = the class/object receiving the dependency
+
+And in normal DI: Dependent ≈ Target
  
-====================
+====================	
 What is Spring Bean
 ====================
 
@@ -104,10 +109,16 @@ public class Car {
 
 	private IEngine eng;
 	
+	//for setter injection
 	public void setEng(IEngine eng) {
 		this.eng = eng;
 		System.out.println("setEng() method called....");
 		System.out.println("Injected :: "+ eng.getClass().getName());
+	}
+
+	//constructor injection
+	public void Car(IEngine eng) {
+		this.eng = eng;
 	}
 
 	public void drive() {
@@ -130,12 +141,19 @@ public class Car {
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 
+   //giving id to each class ie PetrolEng 
 	<bean id="peng" class="in.ashokit.beans.PetrolEng" />
 
+	 //giving id to each class ie DieselEng 
 	<bean id="deng" class="in.ashokit.beans.DieselEng" />
 
+	//Inject the dependency
 	<bean id="car" class="in.ashokit.beans.Car" >
+		//setter injection
 		<property name="eng" ref="peng"/>
+		
+		//constructor injecting
+		//<constructor-arg name="eng" ref="peng"/>
 	</bean>
 
 </beans>
@@ -152,11 +170,15 @@ import in.ashokit.beans.Car;
 public class Test {
 
 	public static void main(String[] args) {
+
+		//eager loading but if the beans has scope = prototype then it called lazy loading
 		ApplicationContext context = 
 				new ClassPathXmlApplicationContext("spring-beans.xml");
 		
 		System.out.println("=======================");
 		
+		//if there is no property tag that allow the dependency then we will get an error
+		//eg in above xml configuration there is a propert tag and hence we will get no error but if there was no property then we will get an error 
 		Car car = context.getBean(Car.class);
 		car.drive();
 	}           
@@ -186,8 +208,7 @@ Bean Scopes
 
 -> To configure bean scope we will use "scope" attribute.
 
-	<bean id="credit" class="in.ashokit.CreditCardPayment" 
-					  scope="prototype" />
+	<bean id="credit" class="in.ashokit.CreditCardPayment" scope="prototype" />
 
 
 ===========

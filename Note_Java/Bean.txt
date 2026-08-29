@@ -1,0 +1,575 @@
+2. Your XML file
+
+You have:
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+<bean id="deng" class="in.ashokit.beans.DieselEng" />
+
+<bean id="car" class="in.ashokit.beans.Car" >
+    <property name="eng" ref="peng"/>
+</bean>
+
+Let's understand each part.
+
+3. <bean> means "Spring should manage this object"
+
+This:
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+basically tells Spring:
+
+"Create an object of PetrolEng and manage it."
+
+Conceptually Spring does something similar to:
+
+PetrolEng peng = new PetrolEng();
+
+But you didn't write new.
+
+Spring does it.
+
+Therefore:
+
+PetrolEng object
+       ↓
+created by Spring
+       ↓
+Spring Bean
+4. What is id="peng"?
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+peng is simply the name/identifier of the bean.
+
+Think:
+
+peng → PetrolEng object
+
+Similarly:
+
+<bean id="deng" class="in.ashokit.beans.DieselEng" />
+
+means:
+
+deng → DieselEng object
+
+So Spring's container might conceptually contain:
+
+Spring Container
+│
+├── peng → PetrolEng object
+│
+├── deng → DieselEng object
+│
+└── car  → Car object
+5. What is class="..."?
+
+For example:
+
+class="in.ashokit.beans.PetrolEng"
+
+This tells Spring which Java class to instantiate.
+
+It's the fully qualified class name:
+
+package + class name
+
+For example:
+
+package in.ashokit.beans;
+
+public class PetrolEng {
+}
+
+Its fully qualified name is:
+
+in.ashokit.beans.PetrolEng
+
+So Spring knows which class to create.
+
+6. Now the important one: Car
+<bean id="car" class="in.ashokit.beans.Car">
+
+This tells Spring:
+
+"Create a Car object and manage it as a bean called car."
+
+Conceptually:
+
+Car car = new Car();
+
+Again, Spring does the new.
+
+7. Now comes Dependency Injection ⭐
+
+This is the most important line:
+
+<property name="eng" ref="peng"/>
+
+This means:
+
+"Take the bean called peng and inject it into the eng property of the Car object."
+
+Conceptually Spring does something similar to:
+
+car.setEng(peng);
+
+Remember your earlier example:
+
+bp.setPayment(cc);
+
+Same concept!
+
+Here:
+
+car.setEng(peng);
+
+is Dependency Injection.
+
+8. What does name="eng" mean?
+
+Suppose your Car class is:
+
+public class Car {
+
+    private Engine eng;
+
+    public void setEng(Engine eng) {
+        this.eng = eng;
+    }
+
+    public void drive() {
+        eng.start();
+    }
+}
+
+The property is:
+
+eng
+
+So:
+
+name="eng"
+
+tells Spring:
+
+"Inject into the eng property."
+
+Spring looks for the corresponding setter:
+
+setEng()
+
+So:
+
+<property name="eng" ... />
+
+basically results in:
+
+car.setEng(...);
+9. What does ref="peng" mean?
+
+This is VERY important.
+
+ref="peng"
+
+means:
+
+"Use the bean whose ID is peng."
+
+Earlier we created:
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+Therefore:
+
+peng
+ ↓
+PetrolEng object
+
+So:
+
+<property name="eng" ref="peng"/>
+
+means:
+
+Take PetrolEng object
+        ↓
+put it into Car's eng property
+
+Conceptually:
+
+car.setEng(peng);
+10. The entire XML in simple English
+
+Your XML says:
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+Spring, create a PetrolEng object and call it peng.
+
+<bean id="deng" class="in.ashokit.beans.DieselEng" />
+
+Spring, create a DieselEng object and call it deng.
+
+<bean id="car" class="in.ashokit.beans.Car">
+
+Spring, create a Car object and call it car.
+
+<property name="eng" ref="peng"/>
+
+Give the peng object to the eng property of car.
+
+So Spring effectively does:
+
+PetrolEng peng = new PetrolEng();
+
+DieselEng deng = new DieselEng();
+
+Car car = new Car();
+
+car.setEng(peng);
+
+But you don't have to write those new statements or setEng() yourself.
+
+That's the purpose of IoC + DI here.
+
+11. Now let's understand your Java code
+
+You have:
+
+ApplicationContext context = 
+        new ClassPathXmlApplicationContext("spring-beans.xml");
+
+This is where Spring starts.
+
+ClassPathXmlApplicationContext
+
+It loads your:
+
+spring-beans.xml
+
+file from the classpath.
+
+So:
+
+Java program
+    ↓
+ClassPathXmlApplicationContext
+    ↓
+reads spring-beans.xml
+    ↓
+Spring understands bean configuration
+12. What happens when XML is loaded?
+
+Spring reads:
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng" />
+
+Creates:
+
+PetrolEng object
+
+Then:
+
+<bean id="deng" class="in.ashokit.beans.DieselEng" />
+
+Creates:
+
+DieselEng object
+
+Then:
+
+<bean id="car" class="in.ashokit.beans.Car">
+
+Creates:
+
+Car object
+
+Then:
+
+<property name="eng" ref="peng"/>
+
+Spring performs:
+
+car.setEng(peng);
+
+So finally:
+
+Spring Container
+
+peng ──────────→ PetrolEng object
+                  ↑
+                  │
+                  │ injected
+                  │
+car ────────────→ Car object
+13. Now getBean()
+
+You write:
+
+Car car = context.getBean(Car.class);
+
+You're saying:
+
+"Spring, give me the Car bean."
+
+Spring looks inside its container:
+
+Spring Container
+│
+├── peng → PetrolEng
+├── deng → DieselEng
+└── car  → Car
+
+It finds:
+
+car → Car object
+
+and returns it.
+
+So:
+
+Car car = context.getBean(Car.class);
+
+gives you the Car object that Spring already created and configured.
+
+14. Then car.drive()
+
+Finally:
+
+car.drive();
+
+Inside Car:
+
+public void drive() {
+    eng.start();
+}
+
+Remember:
+
+eng
+ ↓
+PetrolEng object
+
+because Spring injected it.
+
+So:
+
+car.drive()
+   ↓
+eng.start()
+   ↓
+PetrolEng.start()
+
+--------------------------------
+
+The complete flow
+
+Let's use your Car, IEngine, PetrolEng, and DieselEng example.
+
+Step 1 — Create an interface
+public interface IEngine {
+    void start();
+}
+
+The interface defines the contract.
+
+IEngine
+   ↑
+   |
+   ├── PetrolEng
+   └── DieselEng
+Step 2 — Create implementations
+public class PetrolEng implements IEngine {
+
+    public void start() {
+        System.out.println("Petrol engine started");
+    }
+}
+public class DieselEng implements IEngine {
+
+    public void start() {
+        System.out.println("Diesel engine started");
+    }
+}
+
+Now we have multiple implementations of the same interface.
+
+This gives us loose coupling.
+
+Step 3 — Create the dependent/target class
+
+Your Car class:
+
+public class Car {
+
+    private IEngine eng;
+
+    public void setEng(IEngine eng) {
+        this.eng = eng;
+    }
+
+    public void drive() {
+        eng.start();
+    }
+}
+
+Here:
+
+Car
+ |
+ | needs
+ ↓
+IEngine
+
+Therefore:
+
+Car = dependent
+IEngine = dependency type
+Car = target of injection
+PetrolEng / DieselEng = actual implementations
+Important correction
+
+You said:
+
+"main class which will have one instance variable..."
+
+It isn't necessarily the main class.
+
+It is the dependent class (Car in our example).
+
+It could be:
+
+Car
+PaymentService
+OrderService
+UserService
+BillPayment
+
+etc.
+
+Step 4 — Create Spring XML configuration
+
+Now we tell Spring:
+
+"These are the objects I want you to create and manage."
+
+<bean id="peng" class="in.ashokit.beans.PetrolEng"/>
+
+<bean id="deng" class="in.ashokit.beans.DieselEng"/>
+
+<bean id="car" class="in.ashokit.beans.Car">
+
+    <property name="eng" ref="peng"/>
+
+</bean>
+
+Spring now knows:
+
+peng → PetrolEng object
+deng → DieselEng object
+car  → Car object
+
+These are Spring Beans.
+
+Step 5 — Inject the dependency
+
+This line:
+
+<property name="eng" ref="peng"/>
+
+is the actual Dependency Injection configuration.
+
+Break it down:
+
+name="eng"
+
+Refers to the property:
+
+private IEngine eng;
+
+and its setter:
+
+setEng()
+ref="peng"
+
+Refers to this bean:
+
+<bean id="peng" class="...PetrolEng"/>
+
+So Spring effectively performs:
+
+car.setEng(peng);
+
+Therefore:
+
+PetrolEng object
+       |
+       | injected
+       ↓
+     Car.eng
+Step 6 — Create the Spring Container
+
+Now your Java program starts:
+
+ApplicationContext context =
+        new ClassPathXmlApplicationContext("spring-beans.xml");
+
+This is very important.
+
+ApplicationContext represents the Spring IoC Container.
+
+It reads:
+
+spring-beans.xml
+
+and Spring then:
+
+1. Reads configuration
+2. Creates beans
+3. Manages beans
+4. Finds dependencies
+5. Injects dependencies
+Step 7 — Ask Spring for the object
+
+Then:
+
+Car car = context.getBean(Car.class);
+
+You're saying:
+
+"Spring, give me the Car object that you created and are managing."
+
+Spring gives you the Car bean.
+
+And that Car already has:
+
+Car
+ |
+ | eng
+ ↓
+PetrolEng
+
+because Spring already performed DI.
+
+Step 8 — Call the business method
+
+Finally:
+
+car.drive();
+
+Inside:
+
+public void drive() {
+    eng.start();
+}
+
+Since Spring injected PetrolEng:
+
+car.drive()
+     ↓
+eng.start()
+     ↓
+PetrolEng.start()
+
