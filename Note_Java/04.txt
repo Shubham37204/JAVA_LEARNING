@@ -149,15 +149,15 @@ public class Car {
 
 	//Inject the dependency
 	<bean id="car" class="in.ashokit.beans.Car" >
-		//setter injection
+		//setter injection but this inject zero parametrized constructor 
 		<property name="eng" ref="peng"/>
 		
-		//constructor injecting
+		//constructor injecting and invoke parametrized constructor 
 		//<constructor-arg name="eng" ref="peng"/>
 	</bean>
 
 </beans>
-
+Note setter injection always override constructor injection
 -----------------------------------------------------------
 
 package in.ashokit.test;
