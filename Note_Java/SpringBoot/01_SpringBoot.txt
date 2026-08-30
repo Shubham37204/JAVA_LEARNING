@@ -1,0 +1,49 @@
+============
+Spring Boot
+============
+
+-> Spring Boot is an approach to develop spring based applications with less configuration.
+
+-> Spring Boot is an extension for Spring Framework.
+
+-> What type of apps we can develop using spring same type of apps we can develop using spring boot also.
+
+Note: Spring boot internally using spring framework.
+
+-> Spring Boot supports rapid application development.
+
+=============================
+Advantages with Spring Boot
+============================
+
+1) POM Starters (Simplied Maven dependencies)
+
+	Ex : spring-boot-starter
+	     spring-boot-starter-web
+	     spring-boot-starter-data-jpa
+	     spring-boot-starter-mail
+	     spring-boot-starter-security
+
+2) Dependency Version Conflict Solution
+
+3) Auto Configuration
+
+	Ex: if we add data-jpa starter, it will create cpool
+
+	    when we run boot app, it will start IOC container
+
+	    if we add web starter, it will deploy our app in server
+
+	    If we add security starter, it will provide login page
+
+
+4) Embedded Servers : It will provide server to run our app 
+
+	Ex:  Tomcat, jetty, netty
+
+
+5) Actuators : To monitor our application 
+               (production ready features )
+
+
+#####  spring boot = (spring + auto config ) - xml

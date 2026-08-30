@@ -1,0 +1,375 @@
+| Annotation               | Main purpose                                             | Level / Category                          |
+| ------------------------ | -------------------------------------------------------- | ----------------------------------------- |
+| `@Component`             | Tells Spring to create/manage an object                  | **Bean Definition / Component level**     |
+| `@Scope`                 | Tells Spring how many instances of a bean to create      | **Bean Lifecycle / Scope level**          |
+| `@ComponentScan`         | Tells Spring where to search for `@Component` classes    | **Configuration / Scanning level**        |
+| `@Bean`                  | Manually/customize bean creation using a method          | **Bean Definition / Configuration level** |
+| `@Configuration`         | Marks a class as a source of Spring bean configuration   | **Configuration level**                   |
+| `@SpringBootApplication` | Main Spring Boot annotation that combines several things | **Application level**                     |
+
+
+1. @Component
+@Component
+public class PaymentService {
+
+}
+What it does
+
+It tells Spring:
+
+"Create an object of this class and manage it as a Spring Bean."
+
+So:
+
+@Component
+public class PaymentService
+
+Spring will essentially create:
+
+PaymentService ps = new PaymentService();
+
+and put that object into the Spring IoC Container.
+
+Level
+
+Bean Definition / Component level
+
+It is one of the simplest ways to tell Spring:
+
+"This class should become a Bean."
+
+2. @Scope
+@Component
+@Scope("singleton")
+public class PaymentService {
+
+}
+
+@Scope doesn't primarily define whether the class is a bean.
+
+It defines:
+
+How Spring should manage the bean's instances.
+
+For example:
+
+Singleton
+@Scope("singleton")
+
+One object per Spring container.
+
+Prototype
+@Scope("prototype")
+
+A new object whenever Spring is asked for the bean.
+
+So conceptually:
+
+@Component
+    ↓
+"This class is a Spring Bean"
+
+@Scope
+    ↓
+"How many instances / what lifecycle should this Bean have?"
+Level
+
+Bean Lifecycle / Scope level
+
+3. @ComponentScan
+@ComponentScan("com.example.service")
+
+This tells Spring:
+
+"Search this package and its sub-packages for Spring components."
+
+For example:
+
+com.example
+│
+├── config
+│
+├── service
+│    ├── PaymentService.java     @Component
+│    └── UserService.java        @Component
+│
+└── controller
+     └── UserController.java     @Component
+
+If you configure:
+
+@ComponentScan("com.example")
+
+Spring searches the package and discovers the component classes.
+
+Level
+
+Configuration / Component Scanning level
+
+It is responsible for finding component classes.
+
+4. @Bean
+
+This one is slightly different from @Component.
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public AppSecurity createSecurityObj() {
+
+        AppSecurity as = new AppSecurity("SHA-256");
+
+        return as;
+    }
+}
+
+Here you are telling Spring:
+
+"Call this method and register the returned object as a Spring Bean."
+
+So:
+
+@Bean
+public AppSecurity createSecurityObj()
+
+means:
+
+createSecurityObj()
+       ↓
+creates AppSecurity object
+       ↓
+Spring registers returned object
+       ↓
+Spring Bean
+When is it useful?
+
+Especially when you want to customize object creation.
+
+For example:
+
+new AppSecurity("SHA-256")
+
+Maybe AppSecurity is a third-party class, so you cannot put @Component on it.
+
+Then:
+
+@Bean
+public AppSecurity createSecurityObj() {
+    return new AppSecurity("SHA-256");
+}
+
+is useful.
+
+Level
+
+Bean Definition / Configuration level
+
+5. @Configuration
+@Configuration
+public class AppConfig {
+
+}
+
+It tells Spring:
+
+"This class contains configuration information for creating/managing Beans."
+
+Most commonly you see it together with @Bean:
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public AppSecurity security() {
+        return new AppSecurity("SHA-256");
+    }
+}
+
+So think:
+
+@Configuration
+       ↓
+"This is a configuration class"
+
+@Bean
+       ↓
+"This method defines a Bean"
+Level
+
+Configuration level
+
+6. @SpringBootApplication
+
+This is the important one in Spring Boot.
+
+Usually:
+
+@SpringBootApplication
+public class Application {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+
+It is actually a combination of three important annotations:
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan
+
+So you can think of:
+
+@SpringBootApplication
+
+as a convenient umbrella annotation for a Spring Boot application.
+
+It essentially tells Spring Boot:
+
+1. This is a Spring Boot configuration class
+                +
+2. Enable Spring Boot auto-configuration
+                +
+3. Scan for components
+Level
+
+Application level
+
+It is generally placed on the main Spring Boot application class.
+
+@Service
+@Service
+public class UserService {
+}
+
+@Service is basically a specialized form of @Component.
+
+It is used for classes that contain business/service logic.
+
+@Component → General Spring Bean
+
+@Service → Business/Service layer
+@Repository → DAO/Database layer
+@Controller → Web/MVC controller layer
+
+So your example:
+
+@Service
+public class UserService
+
+means:
+
+Create UserService as a Spring Bean and identify it as a service-layer class.
+
+3. @Repository
+@Repository
+public class UserDao {
+}
+
+Used for the DAO/data-access layer.
+
+Its job is generally to communicate with the database.
+
+UserService
+     ↓
+  UserDao
+     ↓
+ Database
+4. @Controller
+@Controller
+public class UserController {
+}
+
+Used in Spring Web MVC for handling requests coming from the client.
+
+Think:
+
+Client
+  ↓
+Controller
+  ↓
+Service
+  ↓
+DAO
+  ↓
+Database
+
+C2B means Client → Backend communication.
+
+5. @RestController
+@RestController
+public class UserController {
+}
+
+Used for creating REST APIs.
+
+It is commonly used when the backend needs to communicate with clients through data such as JSON.
+
+Think:
+
+Client
+  ↕
+REST API
+  ↕
+Backend
+
+B2B isn't really the defining meaning here. REST APIs can be used for frontend-to-backend, backend-to-backend, mobile-to-backend, etc.
+
+So remember:
+
+@Controller → Spring MVC controller, commonly returns views/pages.
+
+@RestController → REST API controller, commonly returns data such as JSON.
+
+@Autowired
+@Autowired
+private PwdService pwdService;
+
+Tells Spring:
+
+"Inject the required Bean here."
+
+In your UserService:
+
+@Autowired
+private PwdService pwdService;
+
+@Autowired
+private IUserDao userDao;
+
+@Autowired
+private EmailService emailService;
+
+Spring provides these required dependencies.
+
+10. @Qualifier
+
+Used when more than one Bean of the same type exists and Spring needs to know which one to inject.
+
+Example:
+
+@Autowired
+@Qualifier("mysqlDao")
+private IUserDao userDao;
+
+Meaning:
+
+"Inject the Bean named mysqlDao."
+
+11. @Primary
+
+Used when multiple Beans of the same type exist and you want to mark one as the default choice.
+
+@Primary
+@Component
+public class MySqlDao implements IUserDao {
+}
+
+Then when Spring sees:
+
+@Autowired
+private IUserDao userDao;
+
+it will prefer the @Primary Bean
+

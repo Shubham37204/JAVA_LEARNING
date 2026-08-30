@@ -1,0 +1,217 @@
+==============================================
+How to represent java class as Spring Bean ?
+==============================================
+
+<bean id="udao" class="in.ashokit.UserDao" scope="prototype"/>
+
+@Component  // identify spring bean class
+@Scope("prototype")//do the lazy loading
+class UserDao{
+
+}
+
+==============================================
+How component scanning will work internally ?
+==============================================
+
+=> Component scan will work based on base pakage
+
+=> start class pkg is called as base package
+
+=> boot will scan base pakage and its sub packages
+
+Note : The pkg name which is starting with base pkg name is called as sub package of base package.
+
+
+in.ashokit (base package)
+    - Application.java
+    - UserDao.java
+    - ReportDao.java
+
+in.ashokit.service (service is sub package)
+
+com.tcs
+    - UserService.java    
+
+=> We can configure more than one base package also
+
+@SpringBootApplication
+@ComponentScan(basePackages = {"in.ashokit", "com.tcs"})
+public class Application {
+
+	public static void main(String[] args) {
+		ConfigurableApplicationContext context =
+				SpringApplication.run(Application.class, args);
+		
+		int count = context.getBeanDefinitionCount();
+		
+		System.out.println(count);
+	}
+}  
+
+----------------------------------------------
+
+comparison Spring vs SpringBootApplication
+
+
+1. In traditional Spring
+
+You have a Java class:
+
+class UserDao {
+}
+
+Spring does not automatically know that UserDao should be a Spring Bean.
+
+So you explicitly tell Spring through an XML configuration file:
+
+<bean id="udao"
+      class="in.ashokit.UserDao"
+      scope="prototype"/>
+
+Meaning:
+
+“Spring, create an object of UserDao and manage it as a Bean with the name udao.”
+
+So the flow was:
+
+UserDao.java
+     ↓
+Spring XML configuration
+     ↓
+<bean ...>
+     ↓
+Spring creates UserDao object
+     ↓
+Spring Container manages it
+2. In Spring Boot
+
+Spring Boot generally avoids XML configuration.
+
+Instead, you put an annotation on the class:
+
+@Component
+class UserDao {
+}
+
+Now you're telling Spring:
+
+“This class should be managed by Spring as a Bean.”
+
+So:
+
+UserDao.java
+     ↓
+@Component
+     ↓
+Component Scanning
+     ↓
+Spring finds UserDao
+     ↓
+Spring creates UserDao object
+     ↓
+Spring Container manages it
+
+3. Direct comparison
+
+The easiest way to remember it:
+
+Traditional Spring	Spring Boot
+XML configuration	Annotation
+<bean>	@Component
+class="in.ashokit.UserDao"	Class itself tells Spring
+You explicitly configure Bean	Component scanning finds Bean
+XML was commonly used	Java/annotations are commonly used
+
+So conceptually:
+
+<bean id="udao" class="in.ashokit.UserDao"/>
+
+is roughly replaced by:
+
+@Component
+class UserDao {
+}
+
+But one important point: @Component is not literally the same thing as <bean> in every aspect. It is the modern way of telling Spring, “discover this class and register it as a Bean.”
+
+Spring Boot example
+
+Suppose we have:
+
+in.ashokit
+│
+├── SpringBootApplication.java
+│
+├── dao
+│    └── UserDao.java
+│
+└── service
+     └── UserService.java
+1. UserDao
+package in.ashokit.dao;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserDao {
+
+    public void save() {
+        System.out.println("User saved");
+    }
+}
+
+@Component means:
+
+"Spring, manage an object of this class as a Bean."
+
+2. UserService
+package in.ashokit.service;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserService {
+
+}
+
+Again, @Component tells Spring to create and manage this class as a Bean.
+
+3. Main Spring Boot class
+package in.ashokit;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootApplication {
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(SpringBootApplication.class, args);
+
+    }
+}
+
+Now the important part:
+
+@SpringBootApplication
+
+Spring Boot uses this class as the starting point.
+
+Its package is:
+
+in.ashokit
+
+So Spring Boot scans:
+
+in.ashokit
+     ↓
+     ├── dao
+     │    └── UserDao       @Component ✓
+     │
+     └── service
+          └── UserService   @Component ✓
+
+Therefore, both become Spring Beans.
+

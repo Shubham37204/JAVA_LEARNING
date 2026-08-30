@@ -1,0 +1,198 @@
+### What is Autowiring?
+
+**Autowiring means Spring automatically provides the required dependency to a class.**
+
+For example, `UserService` needs `UserDao`:
+
+```java
+@Component
+public class UserService {
+
+    @Autowired
+    private UserDao dao;
+}
+```
+
+Here:
+
+```text
+UserService
+    ↓ needs
+UserDao
+    ↓
+Spring provides the UserDao object
+```
+
+So we don't have to manually write:
+
+```java
+dao = new UserDao();
+```
+
+---
+
+# 3 places where `@Autowired` can be used
+
+## 1. Setter Method Injection
+
+```java
+private PwdService pwdService;
+
+@Autowired
+public void setPwdService(PwdService pwdService) {
+    this.pwdService = pwdService;
+}
+```
+
+Spring calls the setter method and **passes the required Bean**.
+
+Think in Core Java terms:
+
+```java
+UserService service = new UserService();
+
+service.setPwdService(pwdServiceObject);
+```
+
+The difference is that **Spring performs this automatically**.
+
+You can have multiple setter injections:
+
+```java
+@Autowired
+public void setPwdService(PwdService pwdService) {
+    this.pwdService = pwdService;
+}
+
+@Autowired
+public void setUserDao(IUserDao userDao) {
+    this.userDao = userDao;
+}
+
+@Autowired
+public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
+}
+```
+
+---
+
+# 2. Constructor Injection
+
+Conceptually:
+
+```java
+@Component
+public class UserService {
+
+    private PwdService pwdService;
+    private IUserDao userDao;
+
+    @Autowired
+    public UserService(PwdService pwdService, IUserDao userDao) {
+        this.pwdService = pwdService;
+        this.userDao = userDao;
+    }
+}
+```
+
+Here Spring provides the required Beans **through the constructor**.
+
+Think in Core Java:
+
+```java
+UserService service =
+    new UserService(pwdServiceObject, userDaoObject);
+```
+
+Spring automatically supplies those objects.
+
+**Important:** In modern Spring, if there is only **one constructor**, `@Autowired` is generally not required.
+
+---
+
+# 3. Field Injection
+
+```java
+@Component
+public class UserService {
+
+    @Autowired
+    private PwdService pwdService;
+
+    @Autowired
+    private IUserDao userDao;
+
+    @Autowired
+    private EmailService emailService;
+}
+```
+
+Here Spring directly injects the required objects into the fields.
+
+So:
+
+```text
+UserService
+   │
+   ├── pwdService  ← Spring injects PwdService
+   │
+   ├── userDao     ← Spring injects IUserDao
+   │
+   └── emailService ← Spring injects EmailService
+```
+
+This is called **field injection**.
+
+You may hear that Spring uses **reflection** internally for field injection. For now, just remember:
+
+> **Spring injects the dependency directly into the field.**
+
+---
+
+# Simple comparison
+
+| Injection       | Where `@Autowired` is placed | How dependency comes |
+| --------------- | ---------------------------- | -------------------- |
+| **Setter**      | Setter method                | Through setter       |
+| **Constructor** | Constructor                  | Through constructor  |
+| **Field**       | Field                        | Directly into field  |
+
+### Interview answer
+
+> **Autowiring is the process by which Spring automatically provides the required dependency to a Bean. `@Autowired` can be used for constructor, setter-method, and field injection.**
+
+========================================================
+
+@Service
+public class UserService {
+
+	@Autowired
+	private PwdService pwdService;
+
+	@Autowired
+	private IUserDao userDao;
+
+	@Autowired
+	private EmailService emailService;
+
+	public void registerUser(String name, String email, String pwd) {
+
+		// encrypt pwd
+		String encryptPwd = pwdService.encryptPwd(pwd);
+
+		// save user in db
+		boolean isSaved = userDao.saveUser(name, email, encryptPwd);
+
+		// send email
+		if (isSaved) {
+			boolean isSent = emailService.sendEmail(email, "Test Subject", "Test Body");
+			if (isSent) {
+				System.out.println("User Registration Completed...");
+			}
+		}
+	}
+
+}
+
+========================================================

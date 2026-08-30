@@ -1,0 +1,347 @@
+1. @SpringBootApplication
+
+When Spring Boot sees:
+
+@SpringBootApplication
+
+you can think:
+
+"This is the main Spring Boot configuration class. Start the application from here and do the necessary Spring setup."
+
+Internally, it combines:
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan
+
+Your understanding is correct:
+
+@SpringBootConfiguration → marks the class as a Spring configuration class.
+@EnableAutoConfiguration → tells Spring Boot to automatically configure things based on the dependencies.
+@ComponentScan → tells Spring to find Spring Beans in the project.
+
+-----------------------------------------------------------------------
+
+Start with the actual line
+ApplicationContext context =
+    SpringApplication.run(SpringBootJdbcApplication.class, args);
+
+1. SpringApplication → a class
+
+Yes.
+
+Think:
+
+class SpringApplication {
+    ...
+}
+
+This is a class provided by Spring Boot.
+
+It contains a method called run().
+
+So just like:
+
+Math.random();
+
+where Math is a class and random() is a static method,
+
+we have:
+
+SpringApplication.run();
+
+where SpringApplication is a class and run() is a static method.
+
+2. run() → a static method
+
+Conceptually, its method signature is:
+
+public static ConfigurableApplicationContext run(
+        Class<?> primarySource,
+        String[] args) {
+
+    // Spring Boot does its work
+
+    return ...;
+}
+Core Java connection
+
+Look at:
+
+int result = Calculator.add(10, 20);
+
+Timeline:
+
+Calculator
+    ↓
+class
+
+add()
+    ↓
+static method
+
+10, 20
+    ↓
+parameters
+
+returns int
+    ↓
+stored in result
+
+Similarly:
+
+ApplicationContext context =
+        SpringApplication.run(
+            SpringBootJdbcApplication.class,
+            args
+        );
+
+Timeline:
+
+SpringApplication
+       ↓
+     class
+
+run()
+       ↓
+   static method
+
+SpringBootJdbcApplication.class, args
+       ↓
+    parameters
+
+Spring Boot starts
+       ↓
+IOC container is created & configured
+       ↓
+returns ConfigurableApplicationContext object
+       ↓
+stored in → context
+3. What does run() actually return?
+
+The actual return type of this run() method is:
+
+ConfigurableApplicationContext
+
+So this:
+
+public static ConfigurableApplicationContext run(...)
+
+means:
+
+The run() method returns an object whose type is ConfigurableApplicationContext.
+
+⚠️ Important correction to your notes
+
+Don't write:
+
+returns ConfigurableApplicationContext
+↓
+returns ApplicationContext
+
+It doesn't return two different objects.
+
+It returns one ConfigurableApplicationContext object.
+
+That object is also an ApplicationContext because ConfigurableApplicationContext extends ApplicationContext.
+
+4. Then why do we write ApplicationContext context?
+
+This is pure Core Java inheritance/polymorphism.
+
+The relationship is:
+
+ConfigurableApplicationContext
+             ↓
+       extends
+             ↓
+    ApplicationContext
+
+Therefore:
+
+ApplicationContext context =
+        SpringApplication.run(...);
+
+is valid.
+
+Why?
+
+Because the returned object is a:
+
+ConfigurableApplicationContext
+
+and a ConfigurableApplicationContext is also an ApplicationContext.
+
+Core Java example
+
+You already know:
+
+Animal animal = new Dog();
+
+because:
+
+Dog
+ ↓
+is an
+ ↓
+Animal
+
+Similarly:
+
+ApplicationContext context = new ConfigurableApplicationContext(...);
+
+conceptually means:
+
+ConfigurableApplicationContext
+            ↓
+         is an
+            ↓
+ApplicationContext
+
+So context is an ApplicationContext reference pointing to the returned ConfigurableApplicationContext object.
+
+5. Think about it as a normal Core Java method
+
+Forget Spring for a moment.
+
+interface Animal {
+}
+
+class Dog implements Animal {
+}
+
+class Test {
+
+    public static Dog getDog() {
+        return new Dog();
+    }
+
+    public static void main(String[] args) {
+
+        Animal animal = Test.getDog();
+
+    }
+}
+
+Timeline:
+
+Test.getDog()
+      ↓
+method called
+      ↓
+Dog object created/returned
+      ↓
+returned Dog object
+      ↓
+stored in Animal reference
+      ↓
+animal
+
+Exactly the same concept:
+
+SpringApplication.run()
+          ↓
+      method called
+          ↓
+Spring Boot does its setup
+          ↓
+ConfigurableApplicationContext object returned
+          ↓
+stored in ApplicationContext reference
+          ↓
+context
+
+This is the Core Java part you should focus on.
+
+6. What is ApplicationContext?
+
+ApplicationContext is a Spring interface.
+
+For now, don't worry about its entire hierarchy.
+
+Just understand:
+
+ConfigurableApplicationContext
+            ↓
+         extends
+            ↓
+ApplicationContext
+
+And conceptually:
+
+ApplicationContext represents the Spring IOC container and provides methods to interact with the Beans managed by Spring.
+
+That's why we can do:
+
+context.getBean(AlienRepo.class);
+
+Here:
+
+context
+   ↓
+ApplicationContext reference
+   ↓
+getBean()
+   ↓
+asks Spring for a Bean
+7. One more important Core Java connection
+
+Don't confuse these three things:
+
+ApplicationContext
+       ↓
+     TYPE
+   (interface)
+
+
+context
+       ↓
+    VARIABLE
+   (reference)
+
+
+returned object
+       ↓
+ConfigurableApplicationContext
+       ↓
+    ACTUAL OBJECT
+
+So in:
+
+ApplicationContext context =
+        SpringApplication.run(...);
+
+you can read it exactly like Core Java:
+
+ApplicationContext is the reference type, context is the reference variable, and SpringApplication.run() returns a ConfigurableApplicationContext object.
+
+SpringApplication
+       ↓
+     class
+       ↓
+     run()
+       ↓
+  static method
+       ↓
+takes parameters
+       ↓
+SpringBootJdbcApplication.class
+args
+       ↓
+Spring Boot starts
+       ↓
+IOC container created + configured
+       ↓
+returns ConfigurableApplicationContext object
+       ↓
+ConfigurableApplicationContext
+       ↓
+extends ApplicationContext
+       ↓
+ApplicationContext reference
+       ↓
+       context
+
+
+SpringApplication is a Spring Boot class containing the static run() method. The run() method starts the Spring Boot application, creates and configures the IOC container, and returns a ConfigurableApplicationContext object. Since ConfigurableApplicationContext extends ApplicationContext, we can store the returned object in an ApplicationContext reference called context.
+

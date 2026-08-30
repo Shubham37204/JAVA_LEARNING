@@ -1,0 +1,49 @@
+===========================================
+How IOC will be starting in springboot ?
+============================================
+
+=> In springboot run ( ) method will start IOC container based on pom starter.
+
+=> run ( ) method will return ioc obj
+
+
+=> If we add spring-boot-starter then it will use below class to start IOC
+
+Class Name : AnnotationConfigApplicationContext
+ 
+
+=> If we add spring-boot-starter-web then it will use below class to start IOC
+
+Class Name : AnnotationConfigServletWebServerApplicationContext
+
+=> If we add spring-boot-starter-webflux then it will use below class to start IOC
+
+Class : AnnotationConfigReactiveWebServerApplicationContext
+
+==================================
+What is @SpringBootApplication ?
+==================================
+
+@SpringBootConfiguration : Represents java class as config class
+@EnableAutoConfiguration : To load auto configurer classes
+@ComponentScan : To identify spring beans available in the project
+
+---------------------------------------------------------------------
+
+@SpringBootApplication
+
+you can think:
+
+"This is the main Spring Boot configuration class. Start the application from here and do the necessary Spring setup."
+
+Internally, it combines:
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan
+
+Your understanding is correct:
+
+@SpringBootConfiguration → marks the class as a Spring configuration class.
+@EnableAutoConfiguration → tells Spring Boot to automatically configure things based on the dependencies.
+@ComponentScan → tells Spring to find Spring Beans in the project.

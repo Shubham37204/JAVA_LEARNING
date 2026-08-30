@@ -1,0 +1,72 @@
+==============================
+What is @Bean annotation ?
+=============================
+
+What is @Bean?
+
+@Bean is used when we want to manually create/configure a Spring Bean ourselves.
+
+With @Component, Spring creates the object by discovering the class:
+
+@Component
+public class UserDao {
+}
+
+You are basically saying:
+
+"Spring, find this class and create its object."
+
+With @Bean
+
+Here, we write the object-creation code ourselves:
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public AppSecurity createSecurityObj() {
+
+        AppSecurity as = new AppSecurity("SHA-256");
+
+        return as;
+    }
+}
+
+Spring sees:
+
+@Bean
+public AppSecurity createSecurityObj()
+
+and understands:
+
+"Whatever object this method returns, register that object as a Spring Bean."
+
+So:
+
+@Bean method
+     ↓
+new AppSecurity("SHA-256")
+     ↓
+returns AppSecurity object
+     ↓
+Spring registers it as a Bean
+
+------------------------------------------
+
+=> To customize bean obj creation we will write a method with @Bean annotation like below...
+
+//separate class 
+@Configuration
+public class AppConfig {
+	
+	public AppConfig() {
+		System.out.println("AppConfig :: Constructor");
+	}
+
+	@Bean
+	public AppSecurity createSecurityObj() {
+		AppSecurity as = new AppSecurity("SHA-256");
+		return as;
+	}
+}
+
