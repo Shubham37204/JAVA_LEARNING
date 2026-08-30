@@ -1,0 +1,17 @@
+Autowiring having 4 modes
+
+				1) byName
+				2) byType
+				3) constructor
+				4) no (default)
+
+Autowiring means Spring automatically identifies and injects dependencies without explicitly specifying <property> or <constructor-arg>.
+
+byName: Spring matches the property name with a bean ID/name.
+
+byType: Spring matches the property type with a compatible bean. One matching bean → injection; multiple matching beans → ambiguity.
+
+constructor: Spring examines the constructor parameter types and finds compatible beans to pass to the constructor. Its matching is therefore type-based, but it is better to say it uses constructor parameter types rather than saying "constructor internally uses byType."
+
+no: No automatic wiring; dependencies must be configured explicitly. It is the default.
+

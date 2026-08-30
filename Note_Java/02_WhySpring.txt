@@ -1,0 +1,9 @@
+* After learning **Core Java**, developers initially created objects using `new` and managed all dependencies manually.
+* As applications grew larger, this approach resulted in **tight coupling**, making the code difficult to maintain, test, and modify.
+* To overcome this problem, developers introduced **Dependency Injection (DI)**, where a class receives its dependencies from an external source instead of creating them itself.
+* Although DI could be implemented manually, developers still had to create, configure, and manage all objects on their own.
+* As project complexity increased, the **Spring Framework** became popular by introducing the **IoC (Inversion of Control) principle**.
+* With IoC, the **Spring IoC Container** takes responsibility for creating objects, managing their lifecycle, and injecting their required dependencies.
+* Initially, Spring applications were configured using **XML files**, which defined the beans and their relationships.
+* Later, **Autowiring** simplified configuration by allowing Spring to automatically identify and inject the appropriate dependencies.
+* The overall progression can be summarized as: **Core Java → Large Applications → Tight Coupling → Manual Dependency Management → Dependency Injection → Spring Framework → IoC Container → XML Configuration → Autowiring**.

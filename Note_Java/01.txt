@@ -4,7 +4,6 @@
 
 3) What is Framework
 
-
 =======================
 Programming Language
 =======================
@@ -27,8 +26,6 @@ Programming Language
 => Using P.L we can develop software applications
 
 Note: Java is a programming language.
-
-
 
 ======================
 Software Technologies
@@ -61,7 +58,6 @@ Software Technologies
 In every DAO we have 10 methods
 
 100 * 10 => 1000 methods
-
 
 2 Types of logics
 

@@ -1,0 +1,76 @@
+### 1. What is Dependency Injection?
+
+A class receives its required object from outside instead of creating it using `new`. This reduces tight coupling.
+
+```java
+class Car {
+    Engine engine;   // dependency
+
+    Car(Engine engine) {
+        this.engine = engine;  // injection
+    }
+}
+```
+
+### 2. Setter Injection & Constructor Injection
+
+Two ways to inject a dependency:
+
+* **Constructor Injection:** dependency is given through constructor.
+* **Setter Injection:** dependency is given through setter method.
+
+```java
+Car(Engine e) { this.engine = e; }       // Constructor
+void setEngine(Engine e) { this.engine = e; } // Setter
+```
+
+### 3. What is IoC Container?
+
+The **Spring IoC Container** creates and manages objects (beans) and injects their dependencies instead of the developer doing it manually.
+
+```text
+Developer → tells Spring what to manage
+Spring → creates objects + injects dependencies
+```
+
+### 4. DI using `ref` attribute
+
+In XML, `ref` tells Spring **which existing bean should be injected**.
+
+```xml
+<property name="engine" ref="engineBean"/>
+```
+
+Meaning:
+
+> Inject the bean whose ID is `engineBean` into the `engine` property.
+
+### 5. Autowiring
+
+Autowiring allows Spring to **automatically find and inject** a suitable dependency, so we don't have to explicitly use `ref` every time.
+
+```xml
+<bean id="car"
+      class="Car"
+      autowire="byName"/>
+```
+
+**In short:** `ref` = *you explicitly tell Spring what to inject*; **Autowiring** = *Spring tries to figure it out automatically*.
+
+### 6. Bean Scope
+
+Bean scope defines **how many objects Spring creates for a bean and how long they are managed**.
+
+The two important scopes to remember initially are:
+
+* **Singleton (default):** Spring creates **one object** and reuses it.
+* **Prototype:** Spring creates a **new object every time** it is requested.
+
+```xml
+<bean id="student"
+      class="Student"
+      scope="prototype"/>
+```
+
+**In short:** Bean Scope = **controls the object creation/reuse of Spring beans.**
+

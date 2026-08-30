@@ -1,0 +1,90 @@
+
+Singleton
+
+If you have:
+
+<bean id="credit" class="in.ashokit.CreditCardPayment"/>
+
+You haven't written scope, so Spring assumes:
+
+scope = singleton
+
+When you create the ApplicationContext:
+
+ApplicationContext context =
+    new ClassPathXmlApplicationContext("spring-beans.xml");
+
+Spring creates the singleton object even if you never call getBean().
+
+ApplicationContext created
+        ↓
+Spring reads XML
+        ↓
+Creates CreditCardPayment object
+        ↓
+Stores/manages it
+        ↓
+getBean() → gives you the existing object
+Prototype
+
+If you write:
+
+<bean id="credit"
+      class="in.ashokit.CreditCardPayment"
+      scope="prototype"/>
+
+When you create the ApplicationContext:
+
+ApplicationContext context =
+    new ClassPathXmlApplicationContext("spring-beans.xml");
+
+Spring knows about the bean, but doesn't create the object yet.
+
+ApplicationContext created
+        ↓
+Spring reads XML
+        ↓
+Knows "credit" exists
+        ↓
+❌ No object created yet
+
+Then:
+
+context.getBean("credit");
+
+causes:
+
+getBean()
+   ↓
+Create new CreditCardPayment
+   ↓
+Return object
+
+And another:
+
+context.getBean("credit");
+
+creates another new object.
+
+And your last point is also correct
+
+For Singleton:
+
+<bean id="credit"
+      class="CreditCardPayment"/>
+
+scope is optional because singleton is the default.
+
+You could explicitly write:
+
+scope="singleton"
+
+but you don't have to.
+
+For Prototype:
+
+scope="prototype"
+
+You must specify it if you want prototype behavior.
+
+

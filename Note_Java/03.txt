@@ -51,7 +51,9 @@ Strategy Design Pattern
 
 Eg1:(lossing coupling): 
 
-interface Engine{public int start();}
+interface Engine{
+	public int start();
+}
 
 public class PetrolEng implements Engine{
 	public int start(){sout("")}
@@ -114,7 +116,6 @@ Afte CI, SI will happenSI will override CI
 
 So the final value will be SI injected value/obj.
 
-
 =====================
 Dependency Injection
 =====================
@@ -142,4 +143,3 @@ Requirement: Develop BillPayment application usin Strategy Design Pattern.
 	2) Scanner
 	3) Debit Card
 	4) Credit Card
-

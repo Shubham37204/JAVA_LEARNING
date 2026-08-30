@@ -1,4 +1,3 @@
-
 =====================================
 IOC Container (Inversion Of Control)
 =====================================
@@ -30,7 +29,6 @@ What is Spring Bean
 
 => The java classes which are managed by IOC are called as Spring Bean classes.
 
-
 ========================
 Creating Maven Project
 ========================
@@ -54,7 +52,6 @@ Creating Maven Project
 		- pom.xml (maven config file)
 
 => We can search for maven dependencies using www.mvnrepository.com
-
 
 Eg1 :--
 ----------------------------------------------------------
@@ -147,7 +144,7 @@ public class Car {
 	 //giving id to each class ie DieselEng 
 	<bean id="deng" class="in.ashokit.beans.DieselEng" />
 
-	//Inject the dependency
+	//Inject the dependency (manual wiring)
 	<bean id="car" class="in.ashokit.beans.Car" >
 		//setter injection but this inject zero parametrized constructor 
 		<property name="eng" ref="peng"/>
@@ -184,7 +181,6 @@ public class Test {
 	}           
 }
 
-
 =============
 Bean Scopes
 =============
@@ -195,7 +191,7 @@ Bean Scopes
 
 		1) singleton   (by default)
 
-		2) Prototype
+		2) Prototype    (new obj created every time)
 
 		3) request
 
@@ -204,12 +200,11 @@ Bean Scopes
 
 -> For singleton scoped beans only one object will be created by IOC container at the time of IOC starting (eager loading)
 
--> For prototype scoped beans IOC will create new object every time based on demand (lazy loading).
+-> For prototype scoped beans IOC will create new object every time based on demand (lazy loading).(if we have not defined getbeans then no obj is created)
 
 -> To configure bean scope we will use "scope" attribute.
 
 	<bean id="credit" class="in.ashokit.CreditCardPayment" scope="prototype" />
-
 
 ===========
 Autowiring
@@ -222,10 +217,10 @@ Autowiring
 
 => Manual wiring means programmer will inform to IOC which is dependent obj using ref attribute like below
 
+	eg: 
 	<bean id="pp" class="in.ashokit.PaymentProcessor">
 		<property name="payment" ref="debit" />
 	</bean>
-
 
 => Auto wiring means IOC will identify dependent object and it will perform DI.
 
@@ -237,6 +232,7 @@ Autowiring
 				2) byType
 				3) constructor
 				4) no (default)
+
 ========
 byName
 ========
@@ -280,10 +276,4 @@ Note: When we go for byName or byType then IOC will perform Setter Injection wit
 -> If we want to perform Constructor Injection with Autowiring then we should configure autowire="constructor".
 
 Note : autowire=constructor will use byType mechanism to identify dependent object.	
-
-=====
-no
-=====
-
-=> It is default value which will not perform autowiring.
 
