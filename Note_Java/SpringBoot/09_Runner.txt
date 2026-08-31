@@ -1,0 +1,172 @@
+=======================
+Runners in Spring Boot
+=======================
+
+=> Runners will execute only one time when the application starts.
+
+=> Runners will be executed by run ( ) method in Spring Boot.
+
+=> In boot, we have 2 types of Runners
+
+		1) ApplicationRunner -- run ( AppArgs args )
+
+		2) CommandLineRunner -- run ( String[] args )
+
+
+--------------------------------------------------------
+
+
+## Runners in Spring Boot
+
+A **Runner** is used when you want some code to execute **automatically once when the Spring Boot application starts successfully**.
+
+For example, you may want to:
+
+* insert initial data
+* print some information
+* perform a startup task
+
+Spring Boot provides **2 types of Runners**:
+
+| Runner              | `run()` method                   |
+| ------------------- | -------------------------------- |
+| `ApplicationRunner` | `run(ApplicationArguments args)` |
+| `CommandLineRunner` | `run(String... args)`            |
+
+### 1. `CommandLineRunner`
+
+It receives command-line arguments as a `String[]`.
+
+```java
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyRunner implements CommandLineRunner {
+
+    @Override
+    public void run(String... args) {
+        System.out.println("Application Started!");
+        System.out.println("Runner Executed");
+    }
+}
+```
+
+When the Spring Boot application starts:
+
+```text
+Application Started!
+Runner Executed
+```
+
+The `run()` method is automatically called **once**.
+
+---
+
+### 2. `ApplicationRunner`
+
+It also executes once at startup, but it receives arguments in the form of `ApplicationArguments`.
+
+```java
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyRunner implements ApplicationRunner {
+
+    @Override
+    public void run(ApplicationArguments args) {
+        System.out.println("Application Started!");
+        System.out.println("Runner Executed");
+    }
+}
+```
+
+### Main difference
+
+The **purpose is almost the same**. The main difference is how command-line arguments are provided:
+
+```text
+CommandLineRunner
+        ↓
+String... args
+
+ApplicationRunner
+        ↓
+ApplicationArguments args
+```
+
+**Simple way to remember:**
+
+> **Runner = code that Spring Boot automatically runs once when the application starts.**
+
+-----------------------------
+
+
+What is ApplicationArguments?
+
+Suppose you start your Spring Boot application from the command line:
+
+java -jar app.jar --name=Ranjana --age=25
+
+These are your command-line inputs:
+
+--name=Ranjana
+--age=25
+
+Spring Boot needs to give these inputs to your run() method.
+
+There are two ways it can give them to you.
+
+CommandLineRunner
+
+Spring gives them to you almost as they are:
+
+public void run(String... args)
+
+Think:
+
+CLI
+ ↓
+"--name=Ranjana"
+"--age=25"
+ ↓
+String[] args
+
+You have to deal with the strings yourself.
+
+ApplicationRunner
+
+Spring takes those same CLI inputs and puts them inside a special object called ApplicationArguments.
+
+public void run(ApplicationArguments args)
+
+Think:
+
+CLI
+ ↓
+"--name=Ranjana"
+"--age=25"
+ ↓
+ApplicationArguments object
+ ↓
+Spring provides methods to access them
+
+For example:
+
+args.getOptionValues("name");
+
+can give you:
+
+Ranjana
+The easiest way to understand it
+
+ApplicationArguments is NOT another source of input.
+
+It is simply a container/helper object that Spring creates to hold the command-line arguments and provide methods to access them easily.
+
+So:
+
+CLI → input source
+ApplicationArguments → object containing those inputs

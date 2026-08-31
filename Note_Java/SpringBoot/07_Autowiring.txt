@@ -4,30 +4,13 @@
 
 For example, `UserService` needs `UserDao`:
 
-```java
+
 @Component
 public class UserService {
 
     @Autowired
     private UserDao dao;
 }
-```
-
-Here:
-
-```text
-UserService
-    ↓ needs
-UserDao
-    ↓
-Spring provides the UserDao object
-```
-
-So we don't have to manually write:
-
-```java
-dao = new UserDao();
-```
 
 ---
 
@@ -35,30 +18,25 @@ dao = new UserDao();
 
 ## 1. Setter Method Injection
 
-```java
 private PwdService pwdService;
 
 @Autowired
 public void setPwdService(PwdService pwdService) {
     this.pwdService = pwdService;
 }
-```
 
 Spring calls the setter method and **passes the required Bean**.
 
 Think in Core Java terms:
 
-```java
 UserService service = new UserService();
 
 service.setPwdService(pwdServiceObject);
-```
 
 The difference is that **Spring performs this automatically**.
 
 You can have multiple setter injections:
 
-```java
 @Autowired
 public void setPwdService(PwdService pwdService) {
     this.pwdService = pwdService;
@@ -73,7 +51,6 @@ public void setUserDao(IUserDao userDao) {
 public void setEmailService(EmailService emailService) {
     this.emailService = emailService;
 }
-```
 
 ---
 
@@ -81,7 +58,6 @@ public void setEmailService(EmailService emailService) {
 
 Conceptually:
 
-```java
 @Component
 public class UserService {
 
@@ -94,16 +70,14 @@ public class UserService {
         this.userDao = userDao;
     }
 }
-```
+
 
 Here Spring provides the required Beans **through the constructor**.
 
 Think in Core Java:
 
-```java
 UserService service =
     new UserService(pwdServiceObject, userDaoObject);
-```
 
 Spring automatically supplies those objects.
 
@@ -113,7 +87,6 @@ Spring automatically supplies those objects.
 
 # 3. Field Injection
 
-```java
 @Component
 public class UserService {
 
@@ -126,13 +99,12 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 }
-```
+
 
 Here Spring directly injects the required objects into the fields.
 
 So:
 
-```text
 UserService
    │
    ├── pwdService  ← Spring injects PwdService
@@ -140,7 +112,7 @@ UserService
    ├── userDao     ← Spring injects IUserDao
    │
    └── emailService ← Spring injects EmailService
-```
+
 
 This is called **field injection**.
 
@@ -196,3 +168,242 @@ public class UserService {
 }
 
 ========================================================
+
+
+Note:
+
+1. No constructor + Setter Injection
+
+If you don't write any constructor, Java provides a default no-argument constructor.
+
+If the setter is marked with @Autowired, Spring injects the dependency through the setter.
+
+@Component
+class Alien {
+
+    private Laptop laptop;
+
+    @Autowired
+    public void setLaptop(Laptop laptop) {
+        this.laptop = laptop;
+    }
+}
+
+Spring does roughly:
+
+Alien alien = new Alien();       // 0-arg constructor
+alien.setLaptop(laptop);         // setter injection
+
+Remember: No constructor + @Autowired setter → setter injection.
+
+2. 0-argument constructor + parameterized constructor + @Autowired
+
+Suppose we have:
+
+@Component
+class Alien {
+
+    private Laptop laptop;
+
+    public Alien() {
+        System.out.println("0-arg constructor");
+    }
+
+    @Autowired
+    public Alien(Laptop laptop) {
+        System.out.println("parameterized constructor");
+        this.laptop = laptop;
+    }
+}
+
+Because the parameterized constructor is marked @Autowired, Spring uses it for dependency injection.
+
+@Autowired constructor
+        ↓
+Spring finds Laptop
+        ↓
+Alien(Laptop laptop)
+
+So @Autowired tells Spring which constructor to use for injection.
+
+3. Only parameterized constructor + NO @Autowired
+
+This is an important Spring Boot feature.
+
+@Component
+class Alien {
+
+    private Laptop laptop;
+
+    public Alien(Laptop laptop) {
+        this.laptop = laptop;
+    }
+}
+
+If this is the only constructor, modern Spring/Spring Boot can use it automatically.
+
+You don't need:
+
+@Autowired
+
+Spring sees:
+
+Only one constructor
+       ↓
+Use that constructor
+       ↓
+Inject Laptop
+
+
+-----------------------------------
+
+Ambiguity Case:
+
+Yes. In Spring Boot, @Component vs @Component("oracle") becomes especially important when ambiguity occurs during dependency injection.
+
+Let's understand it step-by-step.
+
+1. Suppose we have two classes
+@Component
+public class Oracle implements DataSource {
+}
+@Component
+public class MySQL implements DataSource {
+}
+
+Spring Boot sees:
+
+DataSource
+   ↑
+   ├── Oracle
+   └── MySQL
+
+So Spring has two beans of type DataSource.
+
+Now suppose:
+
+@Component
+public class Service {
+
+    @Autowired
+    private DataSource dataSource;
+}
+
+Spring asks:
+
+"I need a DataSource. Which bean should I inject?"
+
+It finds:
+
+Oracle
+MySQL
+
+Both are DataSource.
+
+Therefore Spring cannot decide.
+
+❌ Ambiguity occurs
+
+You typically get an error like:
+
+NoUniqueBeanDefinitionException:
+expected single matching bean but found 2
+2. Then what does @Component("oracle") do?
+
+You could write:
+
+@Component("oracle")
+public class Oracle implements DataSource {
+}
+
+and:
+
+@Component("mysql")
+public class MySQL implements DataSource {
+}
+
+Now the beans have names:
+
+oracle → Oracle object
+mysql  → MySQL object
+
+But ambiguity still exists!
+
+If you do:
+
+@Autowired
+private DataSource dataSource;
+
+Spring still sees:
+
+DataSource
+   ├── oracle
+   └── mysql
+
+So bean naming by itself does not solve type-based ambiguity.
+
+3. How do we solve the ambiguity?
+Option 1 — @Qualifier
+
+Tell Spring exactly which bean you want:
+
+@Autowired
+@Qualifier("oracle")
+private DataSource dataSource;
+
+Now Spring says:
+
+I need a DataSource, and specifically the bean named oracle.
+
+So:
+
+DataSource
+   ├── oracle ← ✅ SELECT THIS
+   └── mysql
+Option 2 — @Primary
+
+You can tell Spring:
+
+"If there are multiple beans, prefer this one."
+
+@Component
+@Primary
+public class Oracle implements DataSource {
+}
+
+Then:
+
+@Autowired
+private DataSource dataSource;
+
+Spring sees:
+
+DataSource
+   ├── Oracle ← ⭐ @Primary
+   └── MySQL
+
+So Oracle gets injected.
+
+----------------------------------
+
+===============
+SI vs CI vs FI 
+===============
+
+FI --> not recommended to use
+
+		reason-1 : violating oops principles 
+
+		reason-2 : Violating single responsibility principle
+
+SI --> First Target obj & then dependent obj will be created.
+
+	-> Note: Partial dependency injection supported.
+
+CI --> First dependent obj will be created & then target obj will be created.
+
+	 -> Note: In CI, partial dependency injection not supported.		
+
+
+Note : Out of CI , SI and FI it is recommended to use CI.
+

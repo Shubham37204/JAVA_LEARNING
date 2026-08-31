@@ -1,0 +1,20 @@
+=======================
+Banner in Spring Boot
+=======================
+
+=> Logo printing on the console
+
+=> Banner having 3 modes
+
+		1) Console (default)
+		2) Log
+		3) Off (banner will not print)
+
+=> We can customize banner text using banner.txt file
+
+		location : src/main/resources
+
+=> We can generate banner text using below URL
+
+		URL : https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Ashok%20IT		
+

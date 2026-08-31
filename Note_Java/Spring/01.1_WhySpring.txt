@@ -1,9 +1,72 @@
-* After learning **Core Java**, developers initially created objects using `new` and managed all dependencies manually.
-* As applications grew larger, this approach resulted in **tight coupling**, making the code difficult to maintain, test, and modify.
-* To overcome this problem, developers introduced **Dependency Injection (DI)**, where a class receives its dependencies from an external source instead of creating them itself.
-* Although DI could be implemented manually, developers still had to create, configure, and manage all objects on their own.
-* As project complexity increased, the **Spring Framework** became popular by introducing the **IoC (Inversion of Control) principle**.
-* With IoC, the **Spring IoC Container** takes responsibility for creating objects, managing their lifecycle, and injecting their required dependencies.
-* Initially, Spring applications were configured using **XML files**, which defined the beans and their relationships.
-* Later, **Autowiring** simplified configuration by allowing Spring to automatically identify and inject the appropriate dependencies.
-* The overall progression can be summarized as: **Core Java → Large Applications → Tight Coupling → Manual Dependency Management → Dependency Injection → Spring Framework → IoC Container → XML Configuration → Autowiring**.
+* After learning **Core Java**, developers initially created objects using `new` and managed their dependencies manually.
+* As applications grew larger, this approach could lead to **tight coupling**, making the code harder to maintain, test, and modify.
+* To reduce tight coupling, developers use **Dependency Injection (DI)**, where a class receives its dependencies from an external source instead of creating them itself.
+* DI can be implemented manually, but then the developer still has to create, connect, and manage the objects.
+* As applications became more complex, the **Spring Framework** became popular by applying the **IoC (Inversion of Control) principle**.
+* With IoC, the **Spring IoC Container** takes responsibility for creating and managing objects (Beans), managing their lifecycle, and resolving/injecting their dependencies.
+* **Initially**, Spring applications were commonly configured using **XML**, where developers defined Beans and their relationships.
+* Later, Spring introduced **autowiring**, which allowed Spring to automatically resolve and inject dependencies instead of requiring every dependency relationship to be explicitly configured.
+* The overall progression can be summarized as:
+
+**Core Java**
+↓
+**Large Applications**
+↓
+**Tight Coupling / Complex Object Management**
+↓
+**Manual Dependency Management**
+↓
+**Dependency Injection (DI)**
+↓
+**Spring Framework**
+↓
+**IoC Container**
+↓
+**XML / Annotation / Java Configuration**
+↓
+**Autowiring**
+
+### One important thing to remember
+
+Don't think:
+
+> **DI came first and then Spring invented IoC.**
+
+A better way to understand it is:
+
+**DI is a technique/pattern, while IoC is the broader principle. Spring uses DI as one of its main ways of implementing IoC.**
+
+And also:
+
+**XML → Autowiring** is not the complete historical progression. Modern Spring can use **annotations and Java configuration** instead of XML, and Spring Boot makes this configuration much easier.
+
+Your conceptual understanding is now **quite solid**. The next thing we can do is take this exact progression and ask: **"Okay, what does Spring actually do internally when we give it these classes?"** That will naturally lead us to the **Spring Container → Bean → Component → ComponentScan** concepts.
+
+
+CORE JAVA
+    ↓
+Developer manually creates objects
+    ↓
+Tight coupling / difficult object management
+    ↓
+DEPENDENCY INJECTION
+    ↓
+Dependencies supplied from outside
+    ↓
+SPRING
+    ↓
+IoC Container takes control
+    ↓
+Spring creates & manages Beans
+    ↓
+But...
+    ↓
+Still significant configuration
+(XML → annotations → Java configuration)
+    ↓
+SPRING BOOT
+    ↓
+Reduce configuration and setup
+    ↓
+Automatic configuration + sensible defaults
+

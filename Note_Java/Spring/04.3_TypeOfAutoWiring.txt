@@ -15,3 +15,52 @@ constructor: Spring examines the constructor parameter types and finds compatibl
 
 no: No automatic wiring; dependencies must be configured explicitly. It is the default.
 
+========
+byName
+========
+
+-> Based on target bean variable name IOC will identify dependent bean and it will inject it.
+
+Note: target bean variable name should match with bean id.
+
+-> If any bean id is not matching with target bean variable name then D.I will not happen.
+
+Note: Every bean should unique id.
+
+	<bean id="payment" class="in.ashokit.CreditCardPayment" /> //here paymnet in the id must match with instance variable name
+	<bean id="db" class="in.ashokit.DebitCardPayment" />
+
+	<bean id="pp" class="in.ashokit.PaymentProcessor"
+		autowire="byName" />
+
+========
+byType
+========
+
+-> Based on data type of variable IOC will identify dependent object.
+
+-> If variable data type is interface then it will check interface implemented beans.
+
+-> If we have more than one bean which are implementing interface then IOC will get confused to take decision. Then we will get ambuigity problem.
+
+-> We can resolve ambiguity problem in 2 ways
+
+			1) autowire-candidate = false
+
+			2) primary = true		
+
+=============
+constructor
+=============
+
+Note: When we go for byName or byType then IOC will perform Setter Injection with autowiring.
+
+-> If we want to perform Constructor Injection with Autowiring then we should configure autowire="constructor".
+
+Note : autowire=constructor will use byType mechanism to identify dependent object.	
+
+=====
+no
+=====
+
+=> It is default value which will not perform autowiring.

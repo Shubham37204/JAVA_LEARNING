@@ -1,14 +1,23 @@
-| Annotation               | Main purpose                                             | Level / Category                          |
-| ------------------------ | -------------------------------------------------------- | ----------------------------------------- |
-| `@Component`             | Tells Spring to create/manage an object                  | **Bean Definition / Component level**     |
-| `@Scope`                 | Tells Spring how many instances of a bean to create      | **Bean Lifecycle / Scope level**          |
-| `@ComponentScan`         | Tells Spring where to search for `@Component` classes    | **Configuration / Scanning level**        |
-| `@Bean`                  | Manually/customize bean creation using a method          | **Bean Definition / Configuration level** |
-| `@Configuration`         | Marks a class as a source of Spring bean configuration   | **Configuration level**                   |
-| `@SpringBootApplication` | Main Spring Boot annotation that combines several things | **Application level**                     |
+| Annotation               | Main purpose                                                                                   | Level / Category                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `@Component`             | Tells Spring to create/manage the class as a Bean                                              | **Bean Definition / Component level**     |
+| `@Service`               | Marks a class as a service/business-layer Bean                                                 | **Bean Definition / Component level**     |
+| `@Repository`            | Marks a class as a DAO/data-access-layer Bean                                                  | **Bean Definition / Component level**     |
+| `@Controller`            | Marks a class as a Spring MVC controller                                                       | **Web / MVC level**                       |
+| `@RestController`        | Marks a class as a REST API controller                                                         | **Web / REST level**                      |
+| `@Scope`                 | Defines how the Bean's instances should be managed                                             | **Bean Scope / Lifecycle level**          |
+| `@Autowired`             | Tells Spring to inject a required dependency                                                   | **Dependency Injection level**            |
+| `@Qualifier`             | Specifies which Bean should be injected when multiple matching Beans exist                     | **Dependency Injection level**            |
+| `@Primary`               | Marks one Bean as the preferred/default Bean when multiple matching Beans exist                | **Dependency Injection level**            |
+| `@ComponentScan`         | Tells Spring where to search for component classes                                             | **Configuration / Scanning level**        |
+| `@Bean`                  | Defines a Bean through a method                                                                | **Bean Definition / Configuration level** |
+| `@Configuration`         | Marks a class as a source of Bean configuration                                                | **Configuration level**                   |
+| `@SpringBootApplication` | Main Spring Boot annotation; combines configuration, auto-configuration and component scanning | **Application level**                     |
 
+-------------------------------------------------------------------------------------------------------------------------------------------
 
 1. @Component
+
 @Component
 public class PaymentService {
 
@@ -38,7 +47,10 @@ It is one of the simplest ways to tell Spring:
 
 "This class should become a Bean."
 
+
+
 2. @Scope
+
 @Component
 @Scope("singleton")
 public class PaymentService {
@@ -76,7 +88,10 @@ Level
 
 Bean Lifecycle / Scope level
 
+
+
 3. @ComponentScan
+
 @ComponentScan("com.example.service")
 
 This tells Spring:
@@ -107,6 +122,8 @@ Level
 Configuration / Component Scanning level
 
 It is responsible for finding component classes.
+
+
 
 4. @Bean
 
@@ -165,7 +182,10 @@ Level
 
 Bean Definition / Configuration level
 
+
+
 5. @Configuration
+
 @Configuration
 public class AppConfig {
 
@@ -199,6 +219,8 @@ Level
 
 Configuration level
 
+
+
 6. @SpringBootApplication
 
 This is the important one in Spring Boot.
@@ -227,18 +249,74 @@ as a convenient umbrella annotation for a Spring Boot application.
 
 It essentially tells Spring Boot:
 
-1. This is a Spring Boot configuration class
+a. This is a Spring Boot configuration class
                 +
-2. Enable Spring Boot auto-configuration
+b. Enable Spring Boot auto-configuration
                 +
-3. Scan for components
+c. Scan for components
 Level
 
 Application level
 
 It is generally placed on the main Spring Boot application class.
 
-@Service
+
+7. @Autowired
+
+@Autowired
+private PwdService pwdService;
+
+Tells Spring:
+
+"Inject the required Bean here."
+
+In your UserService:
+
+@Autowired
+private PwdService pwdService;
+
+@Autowired
+private IUserDao userDao;
+
+@Autowired
+private EmailService emailService;
+
+Spring provides these required dependencies.
+
+8. @Qualifier
+
+Used when more than one Bean of the same type exists and Spring needs to know which one to inject.
+
+Example:
+
+@Autowired
+@Qualifier("mysqlDao")
+private IUserDao userDao;
+
+Meaning:
+
+"Inject the Bean named mysqlDao."
+
+
+9. @Primary
+
+Used when multiple Beans of the same type exist and you want to mark one as the default choice.
+
+@Primary
+@Component
+public class MySqlDao implements IUserDao {
+}
+
+Then when Spring sees:
+
+@Autowired
+private IUserDao userDao;
+
+it will prefer the @Primary Bean
+
+
+10. @Service
+
 @Service
 public class UserService {
 }
@@ -262,7 +340,9 @@ means:
 
 Create UserService as a Spring Bean and identify it as a service-layer class.
 
-3. @Repository
+
+11. @Repository
+
 @Repository
 public class UserDao {
 }
@@ -276,7 +356,10 @@ UserService
   UserDao
      ↓
  Database
-4. @Controller
+
+
+12. @Controller
+
 @Controller
 public class UserController {
 }
@@ -297,7 +380,10 @@ Database
 
 C2B means Client → Backend communication.
 
-5. @RestController
+
+
+13. @RestController
+
 @RestController
 public class UserController {
 }
@@ -321,55 +407,4 @@ So remember:
 @Controller → Spring MVC controller, commonly returns views/pages.
 
 @RestController → REST API controller, commonly returns data such as JSON.
-
-@Autowired
-@Autowired
-private PwdService pwdService;
-
-Tells Spring:
-
-"Inject the required Bean here."
-
-In your UserService:
-
-@Autowired
-private PwdService pwdService;
-
-@Autowired
-private IUserDao userDao;
-
-@Autowired
-private EmailService emailService;
-
-Spring provides these required dependencies.
-
-10. @Qualifier
-
-Used when more than one Bean of the same type exists and Spring needs to know which one to inject.
-
-Example:
-
-@Autowired
-@Qualifier("mysqlDao")
-private IUserDao userDao;
-
-Meaning:
-
-"Inject the Bean named mysqlDao."
-
-11. @Primary
-
-Used when multiple Beans of the same type exist and you want to mark one as the default choice.
-
-@Primary
-@Component
-public class MySqlDao implements IUserDao {
-}
-
-Then when Spring sees:
-
-@Autowired
-private IUserDao userDao;
-
-it will prefer the @Primary Bean
 
