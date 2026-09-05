@@ -1,0 +1,247 @@
+===================
+ Bean Life Cycle
+===================
+
+Thread Lifecycle
+
+Servlet Life cycle
+
+JSP life cycle
+
+Spring Bean life cycle.....
+
+
+============================================
+Bean Life Cycle with Programmatic Approach
+============================================
+
+InitializingBean - afterPropertiesSet ( )
+
+DisposableBean - destroy ( )
+
+------------------------------------------------
+
+@Component
+public class Car implements InitializingBean, DisposableBean {
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("Car starting.....");
+	}
+
+	public void drive() {
+		System.out.println("I am driving car...");
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("Car stoped...");
+	}
+
+}
+----------------------------------------------------
+
+==================================
+Bean Life Cycle with Annotations
+==================================
+
+@PostConstruct : To execute method after bean obj creation
+
+@PreDestory : To execute method before destorying bean obj
+
+
+-----------------------------------------------------------------
+@Component
+public class Motor {
+
+	@PostConstruct
+	public void m1() {
+		System.out.println("Motor  - init() method");
+	}
+
+	@PreDestroy
+	public void m2() {
+		System.out.println("Motor - destory() method...");
+	}
+}
+----------------------------------------------------------------
+
+## Spring Bean Life Cycle
+
+A Spring Bean has a life cycle because Spring is responsible for creating and managing the bean.
+
+Think of it like:
+
+Create → Initialize → Use → Destroy
+
+For example, for a Car bean:
+
+Spring creates Car object
+        ↓
+Spring initializes Car
+        ↓
+Car is used by application
+        ↓
+Application shuts down
+        ↓
+Spring destroys Car
+
+---
+
+# 1. Programmatic Approach
+
+Here you tell Spring about the initialization and destruction methods by implementing interfaces.
+
+There are two interfaces:
+
+### InitializingBean
+
+It provides:afterPropertiesSet()
+
+This method executes after Spring creates and initializes the bean.
+
+### DisposableBean
+
+It provides:destroy()
+
+This method executes when Spring is destroying the bean.
+
+Your example:
+
+@Component
+public class Car implements InitializingBean, DisposableBean {
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("Car starting.....");
+    }
+
+    public void drive() {
+        System.out.println("I am driving car...");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("Car stopped...");
+    }
+}
+
+### What happens?
+
+When Spring starts:
+
+@Component
+     ↓
+Spring creates Car object
+     ↓
+afterPropertiesSet()
+     ↓
+"Car starting....."
+
+Then during application:drive() can be called.
+
+When Spring shuts down:
+
+Application shutting down
+        ↓
+destroy()
+        ↓
+"Car stopped..."
+
+So remember:
+
+| Interface          | Method                 | When?                     |
+| ------------------ | ---------------------- | ------------------------- |
+| InitializingBean | afterPropertiesSet() | After bean initialization |
+| DisposableBean   | destroy()            | Before bean is destroyed  |
+
+---
+
+# 2. Annotation Approach
+
+Instead of implementing interfaces, Spring allows us to simply put annotations on our methods.
+
+Two important annotations:
+
+### @PostConstruct
+
+Means:
+
+> Run this method after the bean has been created and initialized.
+
+Example:
+
+@PostConstruct
+public void m1() {
+    System.out.println("Motor - init() method");
+}
+
+So:
+
+Motor object created
+       ↓
+@PostConstruct
+       ↓
+m1()
+
+---
+
+### @PreDestroy
+
+Means:
+
+> Run this method before Spring destroys the bean.
+
+Example:
+
+@PreDestroy
+public void m2() {
+    System.out.println("Motor - destroy() method...");
+}
+
+So:
+
+Application shutting down
+       ↓
+@PreDestroy
+       ↓
+m2()
+       ↓
+Motor bean destroyed
+
+---
+
+# The main difference
+
+Both approaches achieve the same basic purpose:
+
+Bean creation
+     ↓
+Initialization method
+     ↓
+Bean is used
+     ↓
+Destruction method
+
+### Programmatic
+
+You implement interfaces:
+
+implements InitializingBean, DisposableBean
+
+and use:
+
+afterPropertiesSet()
+destroy()
+
+### Annotation
+
+You don't implement those interfaces.
+
+You simply use:
+
+@PostConstruct
+@PreDestroy
+
+on your own methods.
+

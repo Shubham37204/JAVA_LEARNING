@@ -386,24 +386,3 @@ So Oracle gets injected.
 
 ----------------------------------
 
-===============
-SI vs CI vs FI 
-===============
-
-FI --> not recommended to use
-
-		reason-1 : violating oops principles 
-
-		reason-2 : Violating single responsibility principle
-
-SI --> First Target obj & then dependent obj will be created.
-
-	-> Note: Partial dependency injection supported.
-
-CI --> First dependent obj will be created & then target obj will be created.
-
-	 -> Note: In CI, partial dependency injection not supported.		
-
-
-Note : Out of CI , SI and FI it is recommended to use CI.
-

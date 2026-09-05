@@ -1,0 +1,59 @@
+1) Spring Vs SpringBoot
+
+2) What is Spring Boot
+
+3) Advantages with SpringBoot
+
+4) Creating Spring Boot App
+
+5) SpringBoot application folder structure
+
+6) Start Class in SpringBoot
+
+7) What is SpringApplication.run ( ) method
+
+8) How IOC will be started in Spring Boot
+
+9) What is @SpringBootApplication annotation
+
+10) What is Auto Configuration
+
+11) What is Component Scanning
+
+12) What is Base Package & Naming Conventions?
+
+13) Can we configure multiple base packages ?
+
+14) @Component annotation
+
+15) @Scope annotation
+
+16) @Configuration annotation
+
+17) @Bean annotation annotation
+
+18) Autowiring (byName, byType)
+
+19) @Qualifier annotation
+
+20) @Primary annoation
+
+21) SpringBoot banner
+
+22) Runners in Spring Boot
+
+23) Bean Life Cycle
+
+24) What is IOC container
+
+25) What is Dependency Injection
+
+26) Setter Injection (SI)
+
+27) Constructor Injection (CI)
+
+28) Field Injection (FI)
+
+29) Bean Scopes
+
+30) Strategy Design Pattern

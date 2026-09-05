@@ -1,0 +1,117 @@
+===============
+SI vs CI vs FI 
+===============
+
+FI -- not recommended to use
+
+		reason-1 : violating oops principles 
+
+		reason-2 : Violating single responsibility principle
+
+SI -- First Target obj & then dependent obj will be created.
+
+	- Note: Partial dependency injection supported.
+
+CI -- First dependent obj will be created & then target obj will be created.
+
+	 - Note: In CI, partial dependency injection not supported.		
+
+
+Note : Out of CI , SI and FI , it is recommended to use CI.
+
+
+---------------------------------------------------------------------------
+
+
+## SI vs CI vs FI — Spring Dependency Injection
+
+### 1. Setter Injection (SI)
+
+* Definition: Dependency is injected into the target object through a setter method.
+* Creation order: First, the target object is created, then its dependent object is injected through the setter.
+* Partial Dependency Injection: Supported — some dependencies can be injected while others can be left optional.
+* Best suited for: Optional dependencies or dependencies that may change after object creation.
+* Limitation: The target object can exist without all its required dependencies.
+* Recommendation: Less preferred than Constructor Injection for mandatory dependencies.
+
+Example:
+
+@Component
+class Student {
+
+    private Address address;
+
+    @Autowired
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+}
+
+Here, Spring creates the `Student` object first and then injects the `Address` object through `setAddress()`.
+
+---
+
+### 2. Constructor Injection (CI)
+
+* Definition: Dependency is injected into the target object through its constructor.
+* Creation order: First, the dependent object is created, then it is passed to the constructor while creating the target object.
+* Partial Dependency Injection: Not supported — all constructor dependencies must be provided to create the target object.
+* Best suited for: Mandatory dependencies that the target object cannot work without.
+* Advantage: Ensures the object is created in a complete and valid state.
+* Advantage: Makes dependencies clearly visible and supports immutability.
+* Recommendation: Constructor Injection is generally recommended among SI, CI, and FI.
+
+Example:
+
+@Component
+class Student {
+
+    private Address address;
+
+    @Autowired
+    public Student(Address address) {
+        this.address = address;
+    }
+}
+
+Here, Spring creates `Address` first and then passes it to the `Student` constructor while creating `Student`.
+
+---
+
+### 3. Field Injection (FI)
+
+* Definition: Dependency is injected directly into a class field using `@Autowired`.
+* Creation order: Spring first creates the target object, then injects the dependency directly into its field.
+* Partial Dependency Injection: Technically possible because the object can be created before all fields are injected.
+* Problem: It hides the class's dependencies because they are not visible through the constructor.
+* Problem: It makes the class harder to test because dependencies cannot be easily supplied through the constructor.
+* Problem: It can violate the Single Responsibility Principle (SRP) by making the class tightly dependent on the framework for dependency management.
+* Recommendation: Not recommended; prefer Constructor Injection.
+
+Example:
+
+@Component
+class Student {
+
+    @Autowired
+    private Address address;
+}
+
+Here, Spring creates the `Student` object first and then directly injects `Address` into the `address` field.
+
+---
+
+### Quick Interview Comparison
+
+| Point                 | SI            | CI               | FI          |
+| --------------------- | ------------- | ---------------- | ----------- |
+| Injection through     | Setter method | Constructor      | Field       |
+| Target object created | First         | After dependency | First       |
+| Partial DI            | ✅ Supported   | ❌ Not supported  | ✅ Possible  |
+| Mandatory dependency  | ❌ Not ideal   | ✅ Best           | ❌ Not ideal |
+| Dependency visibility | Medium        | High         | Low         |
+| Recommended           | Sometimes     | Yes          | No      |
+
+### ⭐ Interview Answer
+
+Spring provides three types of Dependency Injection: Setter Injection, Constructor Injection, and Field Injection. In Setter Injection, the target object is created first and dependencies are injected through setter methods. In Constructor Injection, dependencies are created first and passed through the constructor while creating the target object, so all mandatory dependencies are available during object creation. In Field Injection, dependencies are directly injected into fields using `@Autowired`. Among these, Constructor Injection is generally recommended because it makes dependencies explicit and ensures the object is created with all required dependencies.
